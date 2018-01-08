@@ -1,0 +1,32 @@
+server {
+        listen 80;
+        listen 443 ssl http2;
+        server_name  {{ domain }};
+
+        ### TODO: change to LETSENCRYPT ###
+        ssl_certificate /etc/nginx/ssl/{{ certificate }}.crt;
+        ssl_certificate_key /etc/nginx/ssl/{{ certificate }}.key;
+
+        set $agency_domain '{{ domain  }}';
+        set $agency_id '{{ agency }}';
+        set $agency_application '{{ application }}';
+
+        include /etc/nginx/common/site_traveltool_common.conf;
+        include /etc/nginx/common/site_traveltool_errors.conf;
+
+        ## Usamos este comando aqui sin variables, porque no funciona bien hasta la version 1.9.4
+
+        sub_filter {{ application }} {{ domain }};
+
+        location / {
+
+            proxy_pass http://<APPLICATION>;
+            include /etc/nginx/common/proxy_traveltool.conf;
+
+            if ($request_uri ~* "^/robots.txt") {
+                rewrite ^/robots.txt /robots/traveltoolagencias.txt permanent;
+            }
+
+            include /etc/nginx/sites-available/{{ domain }}.d/*.conf;
+        }
+}
