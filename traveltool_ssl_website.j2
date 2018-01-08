@@ -10,13 +10,18 @@ server {
         listen      443 ssl http2;
         server_name  {{ domain }};
 
+        {% if certificate == 'wildcard.traveltool.es' %}
+        ### TODO: WILCARD CERTIFICATE FOR TRAVELTOOL ###
+        {% else %}
+        ssl_certificate /etc/letsencrypt/live/{{ certificate }}/fullchain.pem; # managed by Certbot 
+        ssl_certificate_key /etc/letsencrypt/live/{{ certificate }}/privkey.pem; # managed by Certbot 
+        include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot 
+        ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot 
+        {% endif %}
+
         set $agency_domain '{{ domain }}';
         set $agency_id '{{ agency }}';
         set $agency_application '{{ application }}';
-
-        ### TODO: change to LETSENCRYPT ###
-        ssl_certificate /etc/nginx/ssl/{{ certificate }}.crt;
-        ssl_certificate_key /etc/nginx/ssl/{{ certificate }}.key;
 
         include /etc/nginx/common/site_traveltool_rewrites.conf;
         include /etc/nginx/common/site_traveltool_common.conf;
