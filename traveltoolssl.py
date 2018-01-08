@@ -185,7 +185,7 @@ def createdomain(domain, agencyId, application, forcessl):
             sys.exit(1)
 
         #Check if certificate exists
-        certDomain = os.path.join(CERT_FOLDER, domain + "/cert.crt")
+        certDomain = os.path.join(CERT_FOLDER, domain + "/cert.pem")
         if not os.path.exists(certDomain):
             logger.info("Couldn't find certificate for domain %s", certDomain)
 
