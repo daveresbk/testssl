@@ -190,11 +190,13 @@ def createdomain(domain, agencyId, application, forcessl):
             logger.info("Couldn't find certificate for domain %s", certDomain)
 
             #Execute certbot and check if certificate exists
-            resultCode, resultOutput = exec_command(['certbot','certificates'])
-            logger.debug("Output: %s", resultOutput)
+            strCmd = "certbot certonly --webroot -w /var/www/html/ -d %s --agree-tos --no-eff-email  --no-redirect --keep --register-unsafely-without-email" % (domain)
+            resultCode, resultOutput = exec_command(strCmd)
             if not (resultCode == 0):
                 logger.critical("Error executing certbot: %s", resultOutput)
                 sys.exit(1)
+        resultCode, resultOutput = exec_command('certbot certificates')
+        logger.info (resultOutput)
         certificate = domain
     else:
         certificate = TRAVELTOOL_WILDCARD
