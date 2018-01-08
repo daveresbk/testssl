@@ -247,7 +247,7 @@ def deletedomain(action,domain):
                     os.remove(certDomain)
                     logger.info("Deleted certificate folder for domain %s",domain)
                 except:
-                    logger.critical("Unexpected error deleting certificate folder", sys.exc_info()[0])
+                    logger.critical("Unexpected error deleting certificate foldera", sys.exc_info()[0])
                     sys.exit(1)
 
     logger.info("Deleted domain %s",domain)
@@ -257,7 +257,7 @@ def deletedomain(action,domain):
 def changedomain(domain, agencyId, application, forcessl):
     logger.info("Changing website configuration for domain %s ...", domain)
 
-    deletedomain(domain)
+    deletedomain("change",domain)
     createdomain(domain,agencyId,application,forcessl)
 
     logger.info("Changed website configuration for domain %s", domain)
@@ -333,7 +333,7 @@ def main():
         createdomain(domain,agencyId,application,forcessl)
     elif action == "delete":
         logger.debug("delete domain")
-        deletedomain(domain)
+        deletedomain(action,domain)
     elif action == "change":
         logger.debug("change domain")
         changedomain(domain,agencyId,application,forcessl)
