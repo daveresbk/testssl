@@ -23,6 +23,8 @@ from jinja2 import Environment, FileSystemLoader
 CERT_FOLDER = '/etc/letsencrypt/live'
 NGINX_SITES = '/etc/nginx/sites-enabled'
 THIS_DIR = os.path.dirname(os.path.abspath(__file__))
+CERTBOT_CREATECERT = "certbot certonly --webroot -w /var/www/html/ -d %s --agree-tos --no-eff-email  --no-redirect --keep --register-unsafely-without-email"
+CERTBOT_DELETECERT = "certbot delete --cert-name %s"
 TEMPLATE_WEBSITE = 'traveltool_website.j2'
 TEMPLATE_SSL_WEBSITE = 'traveltool_ssl_website.j2'
 TEMPLATE_AGENT = 'agent.j2'
@@ -190,12 +192,11 @@ def createdomain(domain, agencyId, application, forcessl):
             logger.info("Couldn't find certificate for domain %s", certDomain)
 
             #Execute certbot and check if certificate exists
-            strCmd = "certbot certonly --webroot -w /var/www/html/ -d %s --agree-tos --no-eff-email  --no-redirect --keep --register-unsafely-without-email" % (domain)
+            strCmd = CERTBOT_CREATECERT % (domain)
             resultCode, resultOutput = exec_command(strCmd)
             if not (resultCode == 0):
-                logger.critical("Error executing certbot: %s", resultOutput)
+                logger.critical("Error executing certbot request for domain: %s", resultOutput)
                 sys.exit(1)
-        resultCode, resultOutput = exec_command('certbot certificates')
         logger.info (resultOutput)
         certificate = domain
     else:
@@ -215,20 +216,41 @@ def createdomain(domain, agencyId, application, forcessl):
 
     return
 
-def deletedomain(domain):
-    logger.info("Deleting website for domain %s ...", domain)
+def deletedomain(action,domain):
+    logger.info("Deleting domain %s ...", domain)
 
+    #delete website config
     siteFile = os.path.join(NGINX_SITES, domain + ".conf")
     if os.path.exists(siteFile):
         try:
             os.remove(siteFile)
+            logger.info("Deleted website for domain %s",domain)
         except:
             logger.critical("Unexpected error deleting website file", sys.exc_info()[0])
             sys.exit(1)
     else:
         logger.warning("Site file doesn't exist: %s",siteFile)
 
-    logger.info("Deleted website for domain %s",domain)
+    #only if action delete, if action change not delete certificate
+    if action == "delete":   
+        if ".traveltool." not in domain:
+            #Check if certificate exists
+            certDomain = os.path.join(CERT_FOLDER, domain)
+            if not os.path.exists(certDomain):
+                logger.warning("Couldn't find certificate for domain %s", certDomain)
+            else:
+                strCmd = CERTBOT_DELETECERT % (domain)
+                resultCode, resultOutput = exec_command(strCmd)
+                if not (resultCode == 0):
+                    logger.warning("Error executing certbot delete for domain: %s", resultOutput)
+                try:
+                    os.remove(certDomain)
+                    logger.info("Deleted certificate folder for domain %s",domain)
+                except:
+                    logger.critical("Unexpected error deleting certificate folder", sys.exc_info()[0])
+                    sys.exit(1)
+
+    logger.info("Deleted domain %s",domain)
 
     return
 
