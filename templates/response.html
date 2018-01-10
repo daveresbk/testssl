@@ -1,0 +1,16 @@
+<html>
+<body>
+<h1>Resultado:</h1>
+<p>OK</p>
+{% if showlogs == '1' %}
+<h1>Logs:</h1>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <p>{{ category > message }}</p>
+        {% endfor %}
+    {% endif %}
+    {% endwith %}
+{% endif %}
+</body>
+</html>
