@@ -19,8 +19,8 @@ app = Flask(__name__)
 # Add NO TRV: /configuration?command=add&domain=test1.toolfactory.tech&idagencia=66&application=www.traveltool.es
 # Delete: /configuration?command=delete&domain=test1.prueba.com
 # Change: /configuration?command=change&domain=test1.toolfactory.tech&idagencia=99&application=www.traveltool.es
-# Addagent: python traveltoolssl.py -a addagent -d test.prueba.com --agentname virgilio --agenturl /mshomett/home?agente=5880
-# Delagent: python traveltoolssl.py -a delagent -d test.prueba.com --agentname virgilio
+# Addagent: /configuration?command=addagent&domain=test1.toolfactory.tech&name=david&url=/homett
+# Delagent: /configuration?command=delagent&domain=test1.toolfactory.tech&name=david
 # #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
