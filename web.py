@@ -341,7 +341,7 @@ def after_request(response):
     # since that 500 is already logged via @app.errorhandler.
     if response.status_code != 500:
         ts = strftime('[%Y-%b-%d %H:%M]')
-        logger.error('%s %s %s %s %s %s',
+        app.logger.info('%s %s %s %s %s %s',
                       ts,
                       request.remote_addr,
                       request.method,
@@ -354,7 +354,7 @@ def after_request(response):
 def exceptions(e):
     ts = strftime('[%Y-%b-%d %H:%M]')
     tb = traceback.format_exc()
-    logger.error('%s %s %s %s %s 5xx INTERNAL SERVER ERROR\n%s',
+    app.logger.info('%s %s %s %s %s 5xx INTERNAL SERVER ERROR\n%s',
                   ts,
                   request.remote_addr,
                   request.method,
