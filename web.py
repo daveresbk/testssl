@@ -29,7 +29,7 @@ app = Flask(__name__)
 CERT_FOLDER = '/etc/letsencrypt/live'
 NGINX_SITES = '/etc/nginx/sites-enabled'
 THIS_DIR = os.path.dirname(os.path.abspath(__file__))
-CERTBOT_CREATECERT = "certbot certonly --webroot -w /var/www/html/ -d %s --agree-tos --no-eff-email  --no-redirect --keep --register-unsafely-without-email"
+CERTBOT_CREATECERT = "certbot certonly --webroot -w /var/www/html/ -d %s --agree-tos --no-eff-email --no-redirect --keep --register-unsafely-without-email"
 CERTBOT_DELETECERT = "certbot delete --cert-name %s"
 TEMPLATE_WEBSITE = 'traveltool_website.j2'
 TEMPLATE_SSL_WEBSITE = 'traveltool_ssl_website.j2'
@@ -159,7 +159,7 @@ def createdomain(domain, agencyId, application, forcessl):
             #logger.info("Couldn't find certificate for domain %s", certDomain)
 
             #Execute certbot and check if certificate exists
-            strCmd = CERTBOT_CREATECERT % (domain)
+            strCmd = CERTBOT_CREATECERT % domain
             resultCode, resultOutput = exec_command(strCmd)
             if not (resultCode == 0):
                 message="Error executing certbot request for domain: %s" % resultOutput
@@ -208,7 +208,7 @@ def deletedomain(action,domain):
                 #logger.warning("Couldn't find certificate for domain %s", certDomain)
                 app.logger.warning("Couldn't find certificate for domain %s", certDomain)
             else:
-                strCmd = CERTBOT_DELETECERT % (domain)
+                strCmd = CERTBOT_DELETECERT % domain
                 resultCode, resultOutput = exec_command(strCmd)
                 if not (resultCode == 0):
                     #logger.warning("Error executing certbot delete for domain: %s", resultOutput)
