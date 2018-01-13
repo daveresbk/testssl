@@ -1,6 +1,8 @@
 from flask import Flask, url_for, request, make_response, Response, render_template, abort, jsonify, flash
 import logging
 import os
+import sys
+import subprocess
 from logging.handlers import RotatingFileHandler
 from jinja2 import Environment, FileSystemLoader
 app = Flask(__name__)
@@ -12,7 +14,7 @@ app = Flask(__name__)
 
 #-----------------------------------------------------------------------------
 # Examples
-# Add: python traveltoolssl.py -a add -d test.prueba.es --agencyid 1 --application www.traveltool.es --forcessl 1
+# Add: /configuration?command=add&domain=test1.traveltool.tech&idagencia=66&application=www.traveltool.es
 # Delete: /configuration?command=delete&domain=test1.prueba.com
 # Change: python traveltoolssl.py -a change -d test.prueba.com --agencyid 2 --application www.traveltool.es
 # Addagent: python traveltoolssl.py -a addagent -d test.prueba.com --agentname virgilio --agenturl /mshomett/home?agente=5880
