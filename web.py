@@ -15,9 +15,10 @@ app = Flask(__name__)
 
 #-----------------------------------------------------------------------------
 # Examples
-# Add: /configuration?command=add&domain=test1.traveltool.tech&idagencia=66&application=www.traveltool.es
+# Add TRV: /configuration?command=add&domain=test1.traveltool.tech&idagencia=66&application=www.traveltool.es
+# Add NO TRV: /configuration?command=add&domain=test1.toolfactory.tech&idagencia=66&application=www.traveltool.es
 # Delete: /configuration?command=delete&domain=test1.prueba.com
-# Change: python traveltoolssl.py -a change -d test.prueba.com --agencyid 2 --application www.traveltool.es
+# Change: /configuration?command=change&domain=test1.toolfactory.tech&idagencia=99&application=www.traveltool.es
 # Addagent: python traveltoolssl.py -a addagent -d test.prueba.com --agentname virgilio --agenturl /mshomett/home?agente=5880
 # Delagent: python traveltoolssl.py -a delagent -d test.prueba.com --agentname virgilio
 # #-----------------------------------------------------------------------------
@@ -29,6 +30,7 @@ app = Flask(__name__)
 #NGINX_SITES = 'c:/temp'
 CERT_FOLDER = '/etc/letsencrypt/live'
 NGINX_SITES = '/etc/nginx/sites-enabled'
+NGINX_AVAILSITES = '/etc/nginx/sites-available'
 THIS_DIR = os.path.dirname(os.path.abspath(__file__))
 CERTBOT_CREATECERT = "certbot certonly --webroot -w /var/www/html/ -d %s --agree-tos --no-eff-email --no-redirect --keep --register-unsafely-without-email"
 CERTBOT_DELETECERT = "certbot delete --cert-name %s"
@@ -239,7 +241,7 @@ def addagent(domain, agentName, agentUrl):
     #logger.info("Creating new agent %s ...", agentName)
 
     #Check if domain file exist
-    siteFile = os.path.join(NGINX_SITES, domain + ".conf")
+    siteFile = os.path.join(NGINX_AVAILSITES, domain + ".conf")
     if not os.path.exists(siteFile):
         message="Couldn't find site file for domain %s" % domain
         abortbyerror(message)
@@ -252,7 +254,7 @@ def addagent(domain, agentName, agentUrl):
     renderAgent = TEMPLATE_ENVIRONMENT.get_template(TEMPLATE_AGENT).render(name = agentName, url = agentUrl)
 
     #Create agent File
-    agentDomainFolder =  os.path.join(NGINX_SITES, domain + ".d/") 
+    agentDomainFolder =  os.path.join(NGINX_AVAILSITES, domain + ".d/") 
     if not os.path.exists(agentDomainFolder):
         #logger.warning("Couldn't find agent folder for domain %s", agentDomainFolder)
         try: 
@@ -260,7 +262,7 @@ def addagent(domain, agentName, agentUrl):
         except: 
             message="Unexpected error creating agent folder. Error: " % sys.exc_info()[0]
             abortbyerror(message)
-    agentFile =  os.path.join(NGINX_SITES, domain + ".d/", agentName + ".conf")
+    agentFile =  os.path.join(NGINX_AVAILSITES, domain + ".d/", agentName + ".conf")
     try:
         #logger.info("Creating file for agent: %s", agentFile)
         with open(agentFile, 'w') as f:
@@ -276,7 +278,7 @@ def addagent(domain, agentName, agentUrl):
 def delagent(domain, agentName):
     #logger.info("Starting to delete agent: %s ...", agentName)
 
-    agentFile =  os.path.join(NGINX_SITES, domain + ".d/", agentName + ".conf")
+    agentFile =  os.path.join(NGINX_AVAILSITES, domain + ".d/", agentName + ".conf")
     try:
         os.remove(agentFile)
     except:

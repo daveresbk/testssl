@@ -35,6 +35,6 @@ server {
                 rewrite ^/robots.txt /robots/traveltoolagencias.txt permanent;
             }
 
-            include /etc/nginx/sites-available/<DOMAIN>.d/*.conf;
+            include /etc/nginx/sites-available/{{ domain }}.d/*.conf;
         }
 }
