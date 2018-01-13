@@ -204,11 +204,13 @@ def deletedomain(action,domain):
             certDomain = os.path.join(CERT_FOLDER, domain)
             if not os.path.exists(certDomain):
                 #logger.warning("Couldn't find certificate for domain %s", certDomain)
+                app.logger.warning("Couldn't find certificate for domain %s", certDomain)
             else:
                 strCmd = CERTBOT_DELETECERT % (domain)
                 resultCode, resultOutput = exec_command(strCmd)
                 if not (resultCode == 0):
                     #logger.warning("Error executing certbot delete for domain: %s", resultOutput)
+                    app.logger.warning("Error executing certbot delete for domain: %s", resultOutput)
                 try:
                     os.remove(certDomain)
                     #logger.info("Deleted certificate folder for domain %s",domain)
