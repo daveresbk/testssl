@@ -3,6 +3,7 @@ import logging
 import os
 import sys
 import subprocess
+from time import strftime
 from logging.handlers import RotatingFileHandler
 from jinja2 import Environment, FileSystemLoader
 app = Flask(__name__)
@@ -296,6 +297,14 @@ def page_not_found(e):
 @app.errorhandler(500)
 def custom500(error):
     return render_template('500.html'),500
+    ts = strftime('[%Y-%b-%d %H:%M]')
+        app.logger.info('%s %s %s %s %s %s',
+                      ts,
+                      request.remote_addr,
+                      request.method,
+                      request.scheme,
+                      request.full_path,
+                      response.status)
 #    response = jsonify({'message': error.description})
 #    return response, 500
 
