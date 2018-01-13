@@ -334,6 +334,35 @@ def configuration():
 
     return render_template('response.html',showlogs=showlogs),200
 
+### LOGGING ROUTING
+@app.after_request
+def after_request(response):
+    # This IF avoids the duplication of registry in the log,
+    # since that 500 is already logged via @app.errorhandler.
+    if response.status_code != 500:
+        ts = strftime('[%Y-%b-%d %H:%M]')
+        logger.error('%s %s %s %s %s %s',
+                      ts,
+                      request.remote_addr,
+                      request.method,
+                      request.scheme,
+                      request.full_path,
+                      response.status)
+    return response
+
+@app.errorhandler(Exception)
+def exceptions(e):
+    ts = strftime('[%Y-%b-%d %H:%M]')
+    tb = traceback.format_exc()
+    logger.error('%s %s %s %s %s 5xx INTERNAL SERVER ERROR\n%s',
+                  ts,
+                  request.remote_addr,
+                  request.method,
+                  request.scheme,
+                  request.full_path,
+                  tb)
+    return "Internal Server Error", 500
+
 ### MAIN ###
 if __name__ == '__main__':
     logHandler = RotatingFileHandler('info.log', maxBytes=1000, backupCount=1)
