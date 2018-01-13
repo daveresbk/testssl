@@ -48,15 +48,15 @@ def abortbyerror(text):
     abort(500)
 
 def exec_command(cmd):
-    logger.info("Executing: %s", cmd)
+    #logger.info("Executing: %s", cmd)
     child = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
     streamdata = (child.communicate()[0]).decode(sys.stdout.encoding)
-    logger.info("Execution finished")
-    logger.debug("Result: %s", str(streamdata))
+    #logger.info("Execution finished")
+    #logger.debug("Result: %s", str(streamdata))
     return child.returncode, streamdata
 
 def template_website(template, tmpdomain, tmpagencyId, tmpapplication, tmpcertificate):
-    logger.info("Starting website template")
+    #logger.info("Starting website template")
 
     templateWebsite = os.path.join(THIS_DIR, template)
     if not os.path.exists(templateWebsite):
@@ -64,7 +64,7 @@ def template_website(template, tmpdomain, tmpagencyId, tmpapplication, tmpcertif
         abortbyerror(message)
 
     renderSite=TEMPLATE_ENVIRONMENT.get_template(template).render(domain = tmpdomain, agency = tmpagencyId, application = tmpapplication, certificate = tmpcertificate)
-    logger.debug("Output template render: %s", renderSite)
+    #logger.debug("Output template render: %s", renderSite)
 
     if not os.path.exists(NGINX_SITES):
         message="Couldn't find Nginx sites folder %s" % NGINX_SITES
@@ -77,9 +77,9 @@ def template_website(template, tmpdomain, tmpagencyId, tmpapplication, tmpcertif
     except:
         message="Unexpected error creating website file. Error: " + sys.exc_info()[0]
         abortbyerror(message)
-    logger.debug("Site templated in %s", tmpdomain)
+    #logger.debug("Site templated in %s", tmpdomain)
     
-    logger.info("Finished website template")
+    #logger.info("Finished website template")
     return
 
 def checkparameters(argumentos):
@@ -142,7 +142,7 @@ def checkparameters(argumentos):
     return action, domain, agencyId, application, agentName, agentUrl, forcessl, showlogs
 
 def createdomain(domain, agencyId, application, forcessl):
-    logger.info("Creating new domain %s", domain)
+    #logger.info("Creating new domain %s", domain)
 
     #If traveltool domain, skip certification request (use wildcard)
     if ".traveltool." not in domain:
@@ -154,7 +154,7 @@ def createdomain(domain, agencyId, application, forcessl):
         #Check if certificate exists
         certDomain = os.path.join(CERT_FOLDER, domain + "/cert.pem")
         if not os.path.exists(certDomain):
-            logger.info("Couldn't find certificate for domain %s", certDomain)
+            #logger.info("Couldn't find certificate for domain %s", certDomain)
 
             #Execute certbot and check if certificate exists
             strCmd = CERTBOT_CREATECERT % (domain)
@@ -162,7 +162,7 @@ def createdomain(domain, agencyId, application, forcessl):
             if not (resultCode == 0):
                 message="Error executing certbot request for domain: %s" % resultOutput
                 abortbyerror(message)
-        logger.info (resultOutput)
+        #logger.info (resultOutput)
         certificate = domain
     else:
         certificate = TRAVELTOOL_WILDCARD
@@ -177,24 +177,24 @@ def createdomain(domain, agencyId, application, forcessl):
 
     #Check nginx config and reload
 
-    logger.info("Created new domain %s", domain)
+    #logger.info("Created new domain %s", domain)
 
     return
 
 def deletedomain(action,domain):
-    logger.info("Deleting domain %s ...", domain)
+    #logger.info("Deleting domain %s ...", domain)
 
     #delete website config
     siteFile = os.path.join(NGINX_SITES, domain + ".conf")
     if os.path.exists(siteFile):
         try:
             os.remove(siteFile)
-            logger.info("Deleted website for domain %s",domain)
+            #logger.info("Deleted website for domain %s",domain)
         except:
             message="Unexpected error deleting website file. Error: " & sys.exc_info()[0]
             abortbyerror(message)
     else:
-        logger.warning("Site file doesn't exist: %s",siteFile)
+        #logger.warning("Site file doesn't exist: %s",siteFile)
 
     #only if action delete, if action change not delete certificate
     if action == "delete":   
@@ -202,35 +202,35 @@ def deletedomain(action,domain):
             #Check if certificate exists
             certDomain = os.path.join(CERT_FOLDER, domain)
             if not os.path.exists(certDomain):
-                logger.warning("Couldn't find certificate for domain %s", certDomain)
+                #logger.warning("Couldn't find certificate for domain %s", certDomain)
             else:
                 strCmd = CERTBOT_DELETECERT % (domain)
                 resultCode, resultOutput = exec_command(strCmd)
                 if not (resultCode == 0):
-                    logger.warning("Error executing certbot delete for domain: %s", resultOutput)
+                    #logger.warning("Error executing certbot delete for domain: %s", resultOutput)
                 try:
                     os.remove(certDomain)
-                    logger.info("Deleted certificate folder for domain %s",domain)
+                    #logger.info("Deleted certificate folder for domain %s",domain)
                 except:
                     message="Unexpected error deleting certificate folder. Error: " % sys.exc_info()[0]
                     abortbyerror(message)
 
-    logger.info("Deleted domain %s",domain)
+    #logger.info("Deleted domain %s",domain)
 
     return
 
 def changedomain(domain, agencyId, application, forcessl):
-    logger.info("Changing website configuration for domain %s ...", domain)
+    #logger.info("Changing website configuration for domain %s ...", domain)
 
     deletedomain("change",domain)
     createdomain(domain,agencyId,application,forcessl)
 
-    logger.info("Changed website configuration for domain %s", domain)
+    #logger.info("Changed website configuration for domain %s", domain)
 
     return
 
 def addagent(domain, agentName, agentUrl):
-    logger.info("Creating new agent %s ...", agentName)
+    #logger.info("Creating new agent %s ...", agentName)
 
     #Check if domain file exist
     siteFile = os.path.join(NGINX_SITES, domain + ".conf")
@@ -248,7 +248,7 @@ def addagent(domain, agentName, agentUrl):
     #Create agent File
     agentDomainFolder =  os.path.join(NGINX_SITES, domain + ".d/") 
     if not os.path.exists(agentDomainFolder):
-        logger.warning("Couldn't find agent folder for domain %s", agentDomainFolder)
+        #logger.warning("Couldn't find agent folder for domain %s", agentDomainFolder)
         try: 
             os.makedirs(agentDomainFolder)
         except: 
@@ -256,19 +256,19 @@ def addagent(domain, agentName, agentUrl):
             abortbyerror(message)
     agentFile =  os.path.join(NGINX_SITES, domain + ".d/", agentName + ".conf")
     try:
-        logger.info("Creating file for agent: %s", agentFile)
+        #logger.info("Creating file for agent: %s", agentFile)
         with open(agentFile, 'w') as f:
             f.write(renderAgent)
     except:
         message="Unexpected error creating agent file. Error: " % sys.exc_info()[0]
         abortbyerror(message)
 
-    logger.info("Created new agent %s", agentName)
+    #logger.info("Created new agent %s", agentName)
 
     return
 
 def delagent(domain, agentName):
-    logger.info("Starting to delete agent: %s ...", agentName)
+    #logger.info("Starting to delete agent: %s ...", agentName)
 
     agentFile =  os.path.join(NGINX_SITES, domain + ".d/", agentName + ".conf")
     try:
@@ -277,7 +277,7 @@ def delagent(domain, agentName):
         message="Unexpected error deleting agent file. Error: " + sys.exc_info()[0]
         abortbyerror(message)
 
-    logger.info("Finished to delete agent: %s", agentName)
+    #logger.info("Finished to delete agent: %s", agentName)
 
     return
 
@@ -307,19 +307,19 @@ def configuration():
 
     ### COMMAND ###
     if action == "add":
-        logger.debug("create domain")
+        #logger.debug("create domain")
         createdomain(domain,agencyId,application,forcessl)
     elif action == "delete":
-        logger.debug("delete domain")
+        #logger.debug("delete domain")
         deletedomain(action,domain)
     elif action == "change":
-        logger.debug("change domain")
+        #logger.debug("change domain")
         changedomain(domain,agencyId,application,forcessl)
     elif action == "addagent":
-        logger.debug("add agent")
+        #logger.debug("add agent")
         addagent(domain, agentName, agentUrl)
     elif action == "delagent":
-        logger.debug("delete agent")
+        #logger.debug("delete agent")
         delagent(domain, agentName)
     else:
         message="Action %s no allowed" % action
