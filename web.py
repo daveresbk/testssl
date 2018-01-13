@@ -6,9 +6,14 @@ from jinja2 import Environment, FileSystemLoader
 app = Flask(__name__)
 
 #-----------------------------------------------------------------------------
+###Setup###
+# flask
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
 # Examples
 # Add: python traveltoolssl.py -a add -d test.prueba.es --agencyid 1 --application www.traveltool.es --forcessl 1
-# Delete: python traveltoolssl.py -a delete -d test.prueba.es
+# Delete: /configuration?command=delete&domain=test1.prueba.com
 # Change: python traveltoolssl.py -a change -d test.prueba.com --agencyid 2 --application www.traveltool.es
 # Addagent: python traveltoolssl.py -a addagent -d test.prueba.com --agentname virgilio --agenturl /mshomett/home?agente=5880
 # Delagent: python traveltoolssl.py -a delagent -d test.prueba.com --agentname virgilio
@@ -110,23 +115,23 @@ def checkparameters(argumentos):
 
     if action == "add":
         if not (action and domain and agencyId and application):
-            message="Invalid parameters for action %s. Required arguments: action, domain, agencyid, application" % action
+            message="Invalid parameters for action %s. Required arguments: command, domain, idagencia, application" % action
             abortbyerror(message)
     elif action == "delete":
         if not (action and domain):
-            message="Invalid parameters for action %s. Required arguments: action, domain" % action
+            message="Invalid parameters for action %s. Required arguments: command, domain" % action
             abortbyerror(message)
     elif action == "change":
         if not (action and domain and agencyId and application):
-            message="Invalid parameters for action %s. Required arguments: action, domain, agencyid, application" % action
+            message="Invalid parameters for action %s. Required arguments: command, domain, idagencia, application" % action
             abortbyerror(message)
     elif action == "addagent":
         if not (action and domain and agentName and agentUrl):
-            message="Invalid parameters for action %s. Required arguments: action, domain, agentname, agenturl" % action
+            message="Invalid parameters for action %s. Required arguments: command, domain, name, url" % action
             abortbyerror(message)
     elif action == "delagent":
         if not (action and domain and agentName):
-            message="Invalid parameters for action %s. Required arguments: action, domain, agentname" % action
+            message="Invalid parameters for action %s. Required arguments: command, domain, name" % action
             abortbyerror(message)
     else:
         message="action %s no allowed" % action
