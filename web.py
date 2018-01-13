@@ -346,17 +346,17 @@ def configuration():
 ### LOGGING ROUTING
 @app.after_request
 def after_request(response):
+    # Note: we treat 500 in other place
     # This IF avoids the duplication of registry in the log,
     # since that 500 is already logged via @app.errorhandler.
-    if response.status_code != 500:
-        ts = strftime('[%Y-%b-%d %H:%M]')
-        app.logger.info('%s %s %s %s %s %s',
-                      ts,
-                      request.remote_addr,
-                      request.method,
-                      request.scheme,
-                      request.full_path,
-                      response.status)
+    ts = strftime('[%Y-%b-%d %H:%M]')
+    app.logger.info('%s %s %s %s %s %s',
+                    ts,
+                    request.remote_addr,
+                    request.method,
+                    request.scheme,
+                    request.full_path,
+                    response.status)
     return response
 
 @app.errorhandler(Exception)
@@ -374,7 +374,7 @@ def exceptions(e):
 
 ### MAIN ###
 if __name__ == '__main__':
-    logHandler = RotatingFileHandler('info.log', maxBytes=1000, backupCount=1)
+    logHandler = RotatingFileHandler('info.log', maxBytes=1000, backupCount=10)
     # set the log handler level
     logHandler.setLevel(logging.INFO)
     # set the app logger level
