@@ -303,7 +303,30 @@ def web_root():
 
 @app.route('/configuration', methods = ['GET'])
 def configuration():
-    action, domain, agencyId, application, agentName, agentUrl, forcessl, showlogs=checkparameters(request.args)    
+    action, domain, agencyId, application, agentName, agentUrl, forcessl, showlogs=checkparameters(request.args)
+
+    ### COMMAND ###
+    if action == "add":
+        logger.debug("create domain")
+        createdomain(domain,agencyId,application,forcessl)
+    elif action == "delete":
+        logger.debug("delete domain")
+        deletedomain(action,domain)
+    elif action == "change":
+        logger.debug("change domain")
+        changedomain(domain,agencyId,application,forcessl)
+    elif action == "addagent":
+        logger.debug("add agent")
+        addagent(domain, agentName, agentUrl)
+    elif action == "delagent":
+        logger.debug("delete agent")
+        delagent(domain, agentName)
+    else:
+        message="Action %s no allowed" % action
+        abortbyerror(message)
+
+    ### TODO: CHECK NGINX AND RELOAD
+
     return render_template('response.html',showlogs=showlogs),200
 
 ### MAIN ###
