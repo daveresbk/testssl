@@ -241,7 +241,7 @@ def addagent(domain, agentName, agentUrl):
     #logger.info("Creating new agent %s ...", agentName)
 
     #Check if domain file exist
-    siteFile = os.path.join(NGINX_AVAILSITES, domain + ".conf")
+    siteFile = os.path.join(NGINX_SITES, domain + ".conf")
     if not os.path.exists(siteFile):
         message="Couldn't find site file for domain %s" % domain
         abortbyerror(message)
