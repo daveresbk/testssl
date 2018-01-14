@@ -6,7 +6,15 @@ import subprocess
 from time import strftime
 from logging.handlers import RotatingFileHandler
 from jinja2 import Environment, FileSystemLoader
+
 app = Flask(__name__)
+logHandler = RotatingFileHandler('info.log', maxBytes=1000, backupCount=10)
+# set the log handler level
+logHandler.setLevel(logging.INFO)
+# set the app logger level
+app.logger.setLevel(logging.INFO)
+app.logger.addHandler(logHandler)
+app.secret_key = 'traveltool'
 
 #-----------------------------------------------------------------------------
 ###Setup###
@@ -376,11 +384,4 @@ def exceptions(e):
 
 ### MAIN ###
 if __name__ == '__main__':
-    logHandler = RotatingFileHandler('info.log', maxBytes=1000, backupCount=10)
-    # set the log handler level
-    logHandler.setLevel(logging.INFO)
-    # set the app logger level
-    app.logger.setLevel(logging.INFO)
-    app.logger.addHandler(logHandler)    
-    app.secret_key = 'traveltool'
     app.run()

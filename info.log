@@ -8,3 +8,6 @@ Invalid parameters for action add. Required arguments: command, domain, idagenci
 Checking input parameters...
 Invalid parameters for action change. Required arguments: command, domain, idagencia, application
 [2018-Jan-14 19:29] 127.0.0.1 GET http /configuration?command=change&domain=aaa 500 INTERNAL SERVER ERROR
+Checking input parameters...
+Invalid parameters for action change. Required arguments: command, domain, idagencia, application
+[2018-Jan-14 19:52] 127.0.0.1 GET http /configuration?command=change&domain=aaa 500 INTERNAL SERVER ERROR
