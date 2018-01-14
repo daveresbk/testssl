@@ -96,7 +96,7 @@ def template_website(template, tmpdomain, tmpagencyId, tmpapplication, tmpcertif
     return
 
 def checkparameters(argumentos):
-    app.logger.info("Checking input parameters...")
+    #app.logger.info("Checking input parameters...")
 
     action=''
     domain=''
@@ -150,7 +150,7 @@ def checkparameters(argumentos):
         message="action %s no allowed" % action
         abortbyerror(message)
 
-    app.logger.info("Checked input parameters")
+    #app.logger.info("Checked input parameters")
 
     return action, domain, agencyId, application, agentName, agentUrl, forcessl, showlogs
 
