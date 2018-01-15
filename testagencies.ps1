@@ -1,4 +1,4 @@
-$externalserver = "http://35.227.45.32"
+$externalserver = "http://35.196.231.95"
 
 $readCsv = "c:\temp\agencias_traveltool_top10.csv"
 $readLines = Import-Csv -Path $readCsv -Delimiter ';' -Header "domain","idagencia","application"

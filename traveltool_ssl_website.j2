@@ -27,6 +27,12 @@ server {
         include /etc/nginx/common/site_traveltool_rewrites.conf;
         include /etc/nginx/common/site_traveltool_common.conf;
 
+        location ~* ^(/|)$ {
+            rewrite (?i)^(/|)$ /mshomett break;
+            proxy_pass http://origen-www.traveltool.es;
+            include /etc/nginx/common/proxy_traveltool.conf;
+        }
+
         location / {
 
             proxy_pass http://origen-www.traveltool.es;
