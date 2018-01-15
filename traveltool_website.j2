@@ -4,7 +4,8 @@ server {
         server_name  {{ domain }};
 
         {% if certificate == 'wildcard.traveltool.es' %}
-        ### TODO: WILCARD CERTIFICATE FOR TRAVELTOOL ###
+        ssl_certificate /etc/nginx/ssl/wildcard.traveltool.crt; 
+        ssl_certificate_key /etc/nginx/ssl/wildcard.traveltool.key; 
         {% else %}
         ssl_certificate /etc/letsencrypt/live/{{ certificate }}/fullchain.pem; # managed by Certbot 
         ssl_certificate_key /etc/letsencrypt/live/{{ certificate }}/privkey.pem; # managed by Certbot 
@@ -25,7 +26,7 @@ server {
 
         location / {
 
-            proxy_pass http://<APPLICATION>;
+            proxy_pass http://origen-www.traveltool.es;
             include /etc/nginx/common/proxy_traveltool.conf;
 
             if ($request_uri ~* "^/robots.txt") {
