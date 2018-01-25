@@ -103,8 +103,9 @@ def template_website(template, tmpdomain, tmpagencyId, tmpapplication, tmpcertif
 def configreload_allservers():
     for item in ARRAYSERVERS:
         conn = http.client.HTTPConnection(item)
-        conn.request("GET",RELOAD_ENPOINT)
         try:
+            conn.request("GET",RELOAD_ENPOINT)
+      
             respconn = conn.getresponse()
             if respconn.status != 200:
                 app.logger.warning("Error sending reload url to %s", item)
