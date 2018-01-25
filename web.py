@@ -102,15 +102,17 @@ def template_website(template, tmpdomain, tmpagencyId, tmpapplication, tmpcertif
 
 def configreload_allservers():
     for item in ARRAYSERVERS:
-        strUrl = "http://%s" % item
         conn = http.client.HTTPConnection(item)
         conn.request("GET",RELOAD_ENPOINT)
-        respconn = conn.getresponse()
-        if respconn.status != 200:
-            app.logger.warning("Error sending reload url to %s", item)
-        else:
-            app.logger.info("OK sending reload url to", item)
-        conn.close()
+        try:
+            respconn = conn.getresponse()
+            if respconn.status != 200:
+                app.logger.warning("Error sending reload url to %s", item)
+            else:
+                app.logger.info("OK sending reload url to", item)
+            conn.close()
+        except:
+            app.logger.warning("Error trying to connect to %s", item)
 
 def checkparameters(argumentos):
     #app.logger.info("Checking input parameters...")
