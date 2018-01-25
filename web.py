@@ -110,6 +110,7 @@ def configreload_allservers():
             app.logger.warning("Error sending reload url to %s", item)
         else:
             app.logger.info("OK sending reload url to", item)
+        conn.close()
 
 def checkparameters(argumentos):
     #app.logger.info("Checking input parameters...")
