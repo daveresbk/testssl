@@ -39,6 +39,8 @@ app.secret_key = 'traveltool'
 CERT_FOLDER = '/etc/letsencrypt/live'
 NGINX_SITES = '/etc/nginx/sites-enabled'
 NGINX_AVAILSITES = '/etc/nginx/sites-available'
+NGINX_CHECK = 'nginx -t'
+NGINX_RELOAD = 'sudo systemctl reload nginx'
 THIS_DIR = os.path.dirname(os.path.abspath(__file__))
 CERTBOT_CREATECERT = "certbot certonly --webroot -w /usr/share/nginx/html/ -d %s --agree-tos --no-eff-email --no-redirect --keep --register-unsafely-without-email"
 CERTBOT_DELETECERT = "certbot delete --cert-name %s"
@@ -352,6 +354,18 @@ def configuration():
     ### TODO: CHECK NGINX AND RELOAD
 
     return render_template('response.html',showlogs=showlogs),200
+
+@app.route('/configreload', methods = ['GET'])
+def config_reload():
+    resultCode, resultOutput = exec_command(NGINX_CHECK)
+    if not (resultCode == 0):   
+        app.logger.warning("Error checking Nginx's configuration /: %s", resultOutput)
+    else:
+        resultCode, resultOutput = exec_command(NGINX_RELOAD)
+        if not (resultCode == 0):   
+            app.logger.warning("Error reloading Nginx's configuration /: %s", resultOutput)
+
+
 
 ### LOGGING ROUTING
 @app.after_request
