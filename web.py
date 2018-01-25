@@ -129,18 +129,24 @@ def checkparameters(argumentos):
     showlogs=''
     if 'command' in argumentos:
         action=argumentos['command']
+        action=action.lower()
     if 'domain' in argumentos:
         domain=argumentos['domain']
+        domain=domain.lower()
     if 'idagencia' in argumentos:
         agencyId=argumentos['idagencia']
     if 'application' in argumentos:
         application=argumentos['application']
+        application=application.lower()
     if 'name' in argumentos:
         agentName=argumentos['name']
+        agentName=agentName.lower()
     if 'url' in argumentos:
         agentUrl=argumentos['url']
+        agentUrl=agentUrl.lower()
     if 'newdomain' in argumentos:
         newdomain=argumentos['newdomain']
+        newdomain=newdomain.lower()
     if 'forcessl' in argumentos: 
         forcessl=argumentos['forcessl']
     if 'showlogs' in argumentos: 
