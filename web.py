@@ -364,7 +364,7 @@ def config_reload():
         resultCode, resultOutput = exec_command(NGINX_RELOAD)
         if not (resultCode == 0):   
             app.logger.warning("Error reloading Nginx's configuration /: %s", resultOutput)
-
+            return 'OK'
 
 
 ### LOGGING ROUTING
