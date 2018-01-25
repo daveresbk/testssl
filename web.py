@@ -358,13 +358,16 @@ def configuration():
 @app.route('/configreload', methods = ['GET'])
 def config_reload():
     resultCode, resultOutput = exec_command(NGINX_CHECK)
-    if not (resultCode == 0):   
-        app.logger.warning("Error checking Nginx's configuration /: %s", resultOutput)
+    if not (resultCode == 0):
+        message="Error checking Nginx's configuration: " % resultOutput
+        abortbyerror(message)
     else:
         resultCode, resultOutput = exec_command(NGINX_RELOAD)
         if not (resultCode == 0):   
-            app.logger.warning("Error reloading Nginx's configuration /: %s", resultOutput)
-            return 'OK'
+            message="Error reloading Nginx's configuration: " % resultOutput
+            abortbyerror(message)
+        else:
+            return 'Reload: OK'
 
 
 ### LOGGING ROUTING
