@@ -6,6 +6,7 @@ import subprocess
 from time import strftime
 from logging.handlers import RotatingFileHandler
 from jinja2 import Environment, FileSystemLoader
+import http.client
 
 app = Flask(__name__)
 logHandler = RotatingFileHandler('info.log', maxBytes=1000, backupCount=10)
@@ -52,6 +53,8 @@ TEMPLATE_ENVIRONMENT = Environment(
     loader=FileSystemLoader(os.path.join(THIS_DIR)),
     trim_blocks=False)
 TRAVELTOOL_WILDCARD = 'wildcard.traveltool.es'
+ARRAYSERVERS = ['ttmadtrvprvp00v', 'ttmadtrvprvp01v', 'ttmadtrvprvp2v']
+RELOAD_ENPOINT = '/configreload'
 
 #-----------------------------------------------------------------------------
 # Functions
@@ -96,6 +99,17 @@ def template_website(template, tmpdomain, tmpagencyId, tmpapplication, tmpcertif
     
     #logger.info("Finished website template")
     return
+
+def configreload_allservers():
+    for item in ARRAYSERVERS:
+        strUrl = "http://%s" % item
+        conn = http.client.HTTPConnection(item)
+        conn.request("GET",RELOAD_ENPOINT)
+        respconn = conn.getresponse()
+        if respconn.status != 200:
+            app.logger.warning("Error sending reload url to %s", item)
+        else:
+            app.logger.info("OK sending reload url to", item)
 
 def checkparameters(argumentos):
     #app.logger.info("Checking input parameters...")
@@ -335,23 +349,26 @@ def configuration():
     if action == "add":
         #logger.debug("create domain")
         createdomain(domain,agencyId,application,forcessl)
+        configreload_allservers()
     elif action == "delete":
         #logger.debug("delete domain")
         deletedomain(action,domain)
+        configreload_allservers()
     elif action == "change":
         #logger.debug("change domain")
         changedomain(domain,agencyId,application,forcessl)
+        configreload_allservers()
     elif action == "addagent":
         #logger.debug("add agent")
         addagent(domain, agentName, agentUrl)
+        configreload_allservers()
     elif action == "delagent":
         #logger.debug("delete agent")
         delagent(domain, agentName)
+        configreload_allservers()
     else:
         message="Action %s no allowed" % action
         abortbyerror(message)
-
-    ### TODO: CHECK NGINX AND RELOAD
 
     return render_template('response.html',showlogs=showlogs),200
 
