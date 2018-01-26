@@ -161,8 +161,8 @@ def checkparameters(argumentos):
             message="Invalid parameters for action %s. Required arguments: command, domain" % action
             abortbyerror(message)
     elif action == "change":
-        if not (action and domain and agencyId and application):
-            message="Invalid parameters for action %s. Required arguments: command, domain, idagencia, application" % action
+        if not (action and domain and agencyId and application and newdomain):
+            message="Invalid parameters for action %s. Required arguments: command, domain, idagencia, application, newdomain" % action
             abortbyerror(message)
     elif action == "addagent":
         if not (action and domain and agentName and agentUrl):
@@ -178,7 +178,7 @@ def checkparameters(argumentos):
 
     #app.logger.info("Checked input parameters")
 
-    return action, domain, agencyId, application, agentName, agentUrl, forcessl, showlogs
+    return action, domain, agencyId, application, newdomain, agentName, agentUrl, forcessl, showlogs
 
 def createdomain(domain, agencyId, application, forcessl):
     #logger.info("Creating new domain %s", domain)
@@ -261,11 +261,11 @@ def deletedomain(action,domain):
 
     return
 
-def changedomain(domain, agencyId, application, forcessl):
+def changedomain(domain, agencyId, application, newdomain, forcessl):
     #logger.info("Changing website configuration for domain %s ...", domain)
 
     deletedomain("change",domain)
-    createdomain(domain,agencyId,application,forcessl)
+    createdomain(newdomain,agencyId,application,forcessl)
 
     #logger.info("Changed website configuration for domain %s", domain)
 
@@ -353,7 +353,7 @@ def web_root():
 
 @app.route('/configuration', methods = ['GET'])
 def configuration():
-    action, domain, agencyId, application, agentName, agentUrl, forcessl, showlogs=checkparameters(request.args)
+    action, domain, agencyId, application, newdomain, agentName, agentUrl, forcessl, showlogs=checkparameters(request.args)
 
     ### COMMAND ###
     if action == "add":
@@ -366,7 +366,7 @@ def configuration():
         configreload_allservers()
     elif action == "change":
         #logger.debug("change domain")
-        changedomain(domain,agencyId,application,forcessl)
+        changedomain(domain,agencyId,application,newdomain,forcessl)
         configreload_allservers()
     elif action == "addagent":
         #logger.debug("add agent")
