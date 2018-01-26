@@ -125,7 +125,7 @@ def checkparameters(argumentos):
     agentName=''
     agentUrl=''
     newdomain=''
-    forcessl=1
+    forcessl='1'
     showlogs=''
     if 'command' in argumentos:
         action=argumentos['command']
@@ -207,7 +207,7 @@ def createdomain(domain, agencyId, application, forcessl):
         certificate = TRAVELTOOL_WILDCARD
 
     #Template nginx site
-    if forcessl == 0:
+    if forcessl == '0':
         template = TEMPLATE_WEBSITE
         template_website(template, domain, agencyId, application, certificate)
     else:
