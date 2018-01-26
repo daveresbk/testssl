@@ -1,6 +1,34 @@
 server {
         listen 80;
-        listen 443 ssl http2;
+        server_name  {{ domain }};
+
+        set $agency_domain '{{ domain  }}';
+        set $agency_id '{{ agency }}';
+        set $agency_application '{{ application }}';
+
+        include /etc/nginx/common/site_traveltool_common.conf;
+        include /etc/nginx/common/site_traveltool_errors.conf;
+
+        location ~* ^(/|)$ {
+            rewrite (?i)^(/|)$ /mshomett break;
+            proxy_pass http://origen-www.traveltool.es;
+            include /etc/nginx/common/proxy_traveltool.conf;
+        }
+
+        location / {
+
+            proxy_pass http://origen-www.traveltool.es;
+            include /etc/nginx/common/proxy_traveltool.conf;
+
+            if ($request_uri ~* "^/robots.txt") {
+                rewrite ^/robots.txt /robots/traveltoolagencias.txt permanent;
+            }
+
+            include /etc/nginx/sites-available/{{ domain }}.d/*.conf;
+        }
+}
+server {
+        listen      443 ssl http2;
         server_name  {{ domain }};
 
         {% if certificate == 'wildcard.traveltool.es' %}
@@ -13,12 +41,13 @@ server {
         ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot 
         {% endif %}
 
-        set $agency_domain '{{ domain  }}';
+        set $agency_domain '{{ domain }}';
         set $agency_id '{{ agency }}';
         set $agency_application '{{ application }}';
 
+        include /etc/nginx/common/site_traveltool_rewrites.conf;
         include /etc/nginx/common/site_traveltool_common.conf;
-        include /etc/nginx/common/site_traveltool_errors.conf;
+        include /etc/nginx/common/proxy_traveltool.conf;
 
         location ~* ^(/|)$ {
             rewrite (?i)^(/|)$ /mshomett break;
