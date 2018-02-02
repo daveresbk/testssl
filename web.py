@@ -54,7 +54,7 @@ TEMPLATE_ENVIRONMENT = Environment(
     loader=FileSystemLoader(os.path.join(THIS_DIR)),
     trim_blocks=False)
 TRAVELTOOL_WILDCARD = 'wildcard.traveltool.es'
-ARRAYSERVERS = ['ttmadtrvprvp00v', 'ttmadtrvprvp01v', 'ttmadtrvprvp2v']
+ARRAYSERVERS = ['ttmadtrvprvp00v', 'ttmadtrvprvp01v', 'ttmadtrvprvp02v']
 RELOAD_ENPOINT = '/configreload'
 RELOAD_ENPOINT_CONSULTEMPLATE = '/configreloadconsultemplate'
 
