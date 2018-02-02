@@ -427,7 +427,7 @@ def config_reload_consultemplate():
 
 @app.route('/configreloadcluster/nginx', methods = ['GET'])
 def config_reloadcluster_nginx():
-    configreload_consultemplate_allservers()
+    configreload_allservers()
     return 'Reload: OK'
 
 @app.route('/configreloadcluster/consultemplate', methods = ['GET'])
