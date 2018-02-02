@@ -42,6 +42,7 @@ NGINX_SITES = '/etc/nginx/sites-enabled'
 NGINX_AVAILSITES = '/etc/nginx/sites-available'
 NGINX_CHECK = 'nginx -t'
 NGINX_RELOAD = 'sudo systemctl reload nginx'
+CONSULTEMPLATE_RELOAD = 'sudo systemctl reload consul-template'
 THIS_DIR = os.path.dirname(os.path.abspath(__file__))
 CERTBOT_CREATECERT = "certbot certonly --webroot -w /usr/share/nginx/html/ -d %s --agree-tos --no-eff-email --no-redirect --keep --register-unsafely-without-email"
 CERTBOT_DELETECERT = "certbot delete --cert-name %s"
@@ -55,6 +56,7 @@ TEMPLATE_ENVIRONMENT = Environment(
 TRAVELTOOL_WILDCARD = 'wildcard.traveltool.es'
 ARRAYSERVERS = ['ttmadtrvprvp00v', 'ttmadtrvprvp01v', 'ttmadtrvprvp2v']
 RELOAD_ENPOINT = '/configreload'
+RELOAD_ENPOINT_CONSULTEMPLATE = '/configreloadconsultemplate'
 
 #-----------------------------------------------------------------------------
 # Functions
@@ -114,6 +116,24 @@ def configreload_allservers():
             conn.close()
         except:
             app.logger.warning("Error trying to connect to %s", item)
+
+
+def configreload_consultemplate_allservers():
+    for item in ARRAYSERVERS:
+        conn = http.client.HTTPConnection(item)
+        try:
+            conn.request("GET",RELOAD_ENPOINT_CONSULTEMPLATE)
+      
+            respconn = conn.getresponse()
+            if respconn.status != 200:
+                app.logger.warning("Error sending reload url to %s", item)
+            else:
+                app.logger.info("OK sending reload url to", item)
+            conn.close()
+        except:
+            app.logger.warning("Error trying to connect to %s", item)
+
+
 
 def checkparameters(argumentos):
     #app.logger.info("Checking input parameters...")
@@ -396,6 +416,24 @@ def config_reload():
         else:
             return 'Reload: OK'
 
+@app.route('/configreloadconsultemplate', methods = ['GET'])
+def config_reload_consultemplate():
+    resultCode, resultOutput = exec_command(CONSULTEMPLATE_RELOAD)
+    if not (resultCode == 0):   
+        message="Error reloading Consul-template's configuration: " % resultOutput
+        abortbyerror(message)
+    else:
+        return 'Reload: OK'
+
+@app.route('/configreloadcluster/nginx', methods = ['GET'])
+def config_reloadcluster_nginx():
+    configreload_consultemplate_allservers
+    return 'Reload: OK'
+
+@app.route('/configreloadcluster/consultemplate', methods = ['GET'])
+def config_reloadcluster_consultemplate():
+    configreload_consultemplate_allservers
+    return 'Reload: OK'
 
 ### LOGGING ROUTING
 @app.after_request
