@@ -436,7 +436,7 @@ def config_reloadcluster_consultemplate():
     return 'Reload: OK'
 
 @app.route('/configreloadcluster/health-check', methods = ['GET'])
-def config_reloadcluster_consultemplate():
+def config_reloadcluster_healthcheck():
     return 'OK'
 
 ### LOGGING ROUTING
