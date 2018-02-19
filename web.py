@@ -361,7 +361,7 @@ def custom500(error):
                     request.method,
                     request.scheme,
                     request.full_path,
-                    response.status)
+                    str(error))
     return render_template('500.html'),500
 #    response = jsonify({'message': error.description})
 #    return response, 500
