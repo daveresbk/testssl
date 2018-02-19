@@ -377,32 +377,36 @@ def web_root():
 def configuration():
     action, domain, agencyId, application, newdomain, agentName, agentUrl, forcessl, showlogs=checkparameters(request.args)
 
-    ### COMMAND ###
-    if action == "add":
-        #logger.debug("create domain")
-        createdomain(domain,agencyId,application,forcessl)
-        configreload_allservers()
-    elif action == "delete":
-        #logger.debug("delete domain")
-        deletedomain(action,domain)
-        configreload_allservers()
-    elif action == "change":
-        #logger.debug("change domain")
-        changedomain(domain,agencyId,application,newdomain,forcessl)
-        configreload_allservers()
-    elif action == "addagent":
-        #logger.debug("add agent")
-        addagent(domain, agentName, agentUrl)
-        configreload_allservers()
-    elif action == "delagent":
-        #logger.debug("delete agent")
-        delagent(domain, agentName)
-        configreload_allservers()
-    else:
-        message="Action %s no allowed" % action
-        abortbyerror(message)
+    if not domain.startswith("www.traveltool."):
+        ### COMMAND ###
+        if action == "add":
+            #logger.debug("create domain")
+            createdomain(domain,agencyId,application,forcessl)
+            configreload_allservers()
+        elif action == "delete":
+            #logger.debug("delete domain")
+            deletedomain(action,domain)
+            configreload_allservers()
+        elif action == "change":
+            #logger.debug("change domain")
+            changedomain(domain,agencyId,application,newdomain,forcessl)
+            configreload_allservers()
+        elif action == "addagent":
+            #logger.debug("add agent")
+            addagent(domain, agentName, agentUrl)
+            configreload_allservers()
+        elif action == "delagent":
+            #logger.debug("delete agent")
+            delagent(domain, agentName)
+            configreload_allservers()
+        else:
+            message="Action %s no allowed" % action
+            abortbyerror(message)
 
-    return render_template('response.html',showlogs=showlogs),200
+        return render_template('response.html',showlogs=showlogs),200
+    else:
+        message="Domain not allowed: %s. Own domain is required." % domain
+        abortbyerror(message)
 
 @app.route('/configreload', methods = ['GET'])
 def config_reload():
