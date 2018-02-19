@@ -371,7 +371,7 @@ def web_root():
 #    resp.headers['X-Reason'] = 'Page not found'
 #    return resp
 
-@app.route('/configuration', methods = ['GET'])
+@app.route('/configuration', methods = ['GET','POST'])
 def configuration():
     action, domain, agencyId, application, newdomain, agentName, agentUrl, forcessl, showlogs=checkparameters(request.args)
 
