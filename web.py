@@ -354,7 +354,6 @@ def page_not_found(e):
 
 @app.errorhandler(500)
 def custom500(error):
-    return render_template('500.html'),500
     ts = strftime('[%Y-%b-%d %H:%M]')
     app.logger.info('%s %s %s %s %s %s',
                     ts,
@@ -363,6 +362,7 @@ def custom500(error):
                     request.scheme,
                     request.full_path,
                     response.status)
+    return render_template('500.html'),500
 #    response = jsonify({'message': error.description})
 #    return response, 500
 
