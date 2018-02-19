@@ -112,7 +112,7 @@ def configreload_allservers():
             if respconn.status != 200:
                 app.logger.warning("Error sending reload url to %s", item)
             else:
-                app.logger.info("OK sending reload url to", item)
+                app.logger.info("OK sending reload url to %s", item)
             conn.close()
         except:
             app.logger.warning("Error trying to connect to %s", item)
@@ -128,7 +128,7 @@ def configreload_consultemplate_allservers():
             if respconn.status != 200:
                 app.logger.warning("Error sending reload url to %s", item)
             else:
-                app.logger.info("OK sending reload url to", item)
+                app.logger.info("OK sending reload url to %s", item)
             conn.close()
         except:
             app.logger.warning("Error trying to connect to %s", item)
@@ -464,14 +464,13 @@ def after_request(response):
 @app.errorhandler(Exception)
 def exceptions(e):
     ts = strftime('[%Y-%b-%d %H:%M]')
-    tb = traceback.format_exc()
     app.logger.info('%s %s %s %s %s 5xx INTERNAL SERVER ERROR\n%s',
                   ts,
                   request.remote_addr,
                   request.method,
                   request.scheme,
                   request.full_path,
-                  tb)
+                  str(e))
     return "Internal Server Error", 500
 
 ### MAIN ###
