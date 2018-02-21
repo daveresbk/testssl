@@ -408,6 +408,11 @@ def configuration():
         message="Domain not allowed: %s. Own domain is required." % domain
         abortbyerror(message)
 
+#MIGRATION COMPATIBILITY
+@app.route('/configuration.php', methods = ['GET','POST'])
+def configurationphp():
+    configuration()
+
 @app.route('/configreload', methods = ['GET'])
 def config_reload():
     resultCode, resultOutput = exec_command(NGINX_CHECK)
