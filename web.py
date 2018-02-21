@@ -409,7 +409,7 @@ def configuration():
         abortbyerror(message)
 
 #MIGRATION COMPATIBILITY
-@app.route('/configuration.php', methods = ['GET','POST'])
+@app.route('/reverseproxy/configuration.php', methods = ['GET','POST'])
 def configurationphp():
     configuration()
 
