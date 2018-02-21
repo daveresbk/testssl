@@ -229,11 +229,11 @@ def createdomain(domain, agencyId, application, forcessl):
         certificate = TRAVELTOOL_WILDCARD
 
     #Template nginx site
-    if forcessl == '0':
-        template = TEMPLATE_WEBSITE
+    if forcessl == '1':
+        template = TEMPLATE_SSL_WEBSITE
         template_website(template, domain, agencyId, application, certificate)
     else:
-        template = TEMPLATE_SSL_WEBSITE
+        template = TEMPLATE_WEBSITE
         template_website(template, domain, agencyId, application, certificate)
 
     #Check nginx config and reload
