@@ -373,7 +373,9 @@ def web_root():
 #    resp.headers['X-Reason'] = 'Page not found'
 #    return resp
 
+#MIGRATION COMPATIBILITY
 @app.route('/configuration', methods = ['GET','POST'])
+@app.route('/reverseproxy/configuration.php', methods = ['GET','POST'])
 def configuration():
     action, domain, agencyId, application, newdomain, agentName, agentUrl, forcessl, showlogs=checkparameters(request.args)
 
@@ -407,11 +409,6 @@ def configuration():
     else:
         message="Domain not allowed: %s. Own domain is required." % domain
         abortbyerror(message)
-
-#MIGRATION COMPATIBILITY
-@app.route('/reverseproxy/configuration.php', methods = ['GET','POST'])
-def configurationphp():
-    configuration()
 
 @app.route('/configreload', methods = ['GET'])
 def config_reload():
