@@ -145,7 +145,7 @@ def checkparameters(argumentos):
     agentName=''
     agentUrl=''
     newdomain=''
-    forcessl='0'
+    forcessl='1'
     showlogs=''
     if 'command' in argumentos:
         action=argumentos['command']
