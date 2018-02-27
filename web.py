@@ -174,6 +174,10 @@ def checkparameters(argumentos):
     if 'showlogs' in argumentos: 
         showlogs=argumentos['showlogs']
 
+    if ".traveltool." not in application:
+        message="Invalid parameter for application: %s. This paramater must be in form *.traveltool.*" % action
+        abortbyerror(message)
+
     if action == "add":
         if not (action and domain and agencyId and application):
             message="Invalid parameters for action %s. Required arguments: command, domain, idagencia, application" % action
