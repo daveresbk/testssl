@@ -167,10 +167,10 @@ def checkparameters(argumentos):
     if 'newdomain' in argumentos:
         newdomain=argumentos['newdomain']
         newdomain=newdomain.lower()
-    #if 'forcessl' in argumentos: 
-    #    forcessl=argumentos['forcessl']
-    #if 'forceSSL' in argumentos: 
-    #    forcessl=argumentos['forceSSL']
+    #migracion#if 'forcessl' in argumentos: 
+    #migracion#    forcessl=argumentos['forcessl']
+    #migracion#if 'forceSSL' in argumentos: 
+    #migracion#    forcessl=argumentos['forceSSL']
     if 'showlogs' in argumentos: 
         showlogs=argumentos['showlogs']
 
@@ -388,23 +388,23 @@ def configuration():
         if action == "add":
             #logger.debug("create domain")
             createdomain(domain,agencyId,application,forcessl)
-            configreload_allservers()
+            #migracion#configreload_allservers()
         elif action == "delete":
             #logger.debug("delete domain")
             deletedomain(action,domain)
-            configreload_allservers()
+            #migracion#configreload_allservers()
         elif action == "change":
             #logger.debug("change domain")
             changedomain(domain,agencyId,application,newdomain,forcessl)
-            configreload_allservers()
+            #migracion#configreload_allservers()
         elif action == "addagent":
             #logger.debug("add agent")
             addagent(domain, agentName, agentUrl)
-            configreload_allservers()
+            #migracion#configreload_allservers()
         elif action == "delagent":
             #logger.debug("delete agent")
             delagent(domain, agentName)
-            configreload_allservers()
+            #migracion#configreload_allservers()
         else:
             message="Action %s no allowed" % action
             abortbyerror(message)
