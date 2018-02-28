@@ -106,6 +106,7 @@ def template_website(template, tmpdomain, tmpagencyId, tmpapplication, tmpcertif
 def configreload_allservers():
     for item in ARRAYSERVERS:
         conn = http.client.HTTPConnection(item)
+        app.logger.info("Preparing to send reload to %s", item)
         try:
             conn.request("GET",RELOAD_ENPOINT)
             respconn = conn.getresponse()
@@ -117,6 +118,7 @@ def configreload_allservers():
             app.logger.warning("Error trying to connect to %s - %s", item, ex)
         finally:
             conn.close()
+    
 
 
 def configreload_consultemplate_allservers():
