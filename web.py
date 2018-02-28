@@ -167,10 +167,10 @@ def checkparameters(argumentos):
     if 'newdomain' in argumentos:
         newdomain=argumentos['newdomain']
         newdomain=newdomain.lower()
-    #if 'forcessl' in argumentos: 
-    #    forcessl=argumentos['forcessl']
-    #if 'forceSSL' in argumentos: 
-    #    forcessl=argumentos['forceSSL']
+    if 'forcessl' in argumentos: 
+        forcessl=argumentos['forcessl']
+    if 'forceSSL' in argumentos: 
+        forcessl=argumentos['forceSSL']
     if 'showlogs' in argumentos: 
         showlogs=argumentos['showlogs']
 
