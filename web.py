@@ -106,7 +106,7 @@ def template_website(template, tmpdomain, tmpagencyId, tmpapplication, tmpcertif
 def configreload_allservers():
     for item in ARRAYSERVERS:
         conn = http.client.HTTPConnection(item)
-        app.logger.info("Preparing to send reload to %s", item)
+        app.logger.warning("Preparing to send reload to %s", item)
         try:
             conn.request("GET",RELOAD_ENPOINT)
             respconn = conn.getresponse()
@@ -221,7 +221,7 @@ def createdomain(domain, agencyId, application, forcessl):
         except:
             message="Unexpected error deleting website file. Error: " & sys.exc_info()[0]
             abortbyerror(message)
-        #configreload_allservers()
+        configreload_allservers()
     
     #Check if request certificate is needed
     requestCertificate = True
