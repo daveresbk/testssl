@@ -3,6 +3,7 @@ import logging
 import os
 import sys
 import subprocess
+import re
 from time import strftime
 from logging.handlers import RotatingFileHandler
 from jinja2 import Environment, FileSystemLoader
@@ -208,9 +209,19 @@ def checkparameters(argumentos):
 
 def createdomain(domain, agencyId, application, forcessl):
     #logger.info("Creating new domain %s", domain)
+    requestCertificate = True
 
     #If traveltool domain, skip certification request (use wildcard)
-    if ".traveltool." not in domain:
+    if ".traveltool." in domain:
+        strRegex = re.compile('(.*).traveltool.', re.IGNORECASE)
+        strFound = strRegex.match(domain)
+        domainPreffix = strFound.group(1)
+        if "." in domainPreffix:
+            requestCertificate = True
+        else:
+            requestCertificate = False
+
+    if requestCertificate:
         #Check if certificate folder exists
         if not os.path.exists(CERT_FOLDER):
             message="Couldn't find certificate folder %s" % CERT_FOLDER
