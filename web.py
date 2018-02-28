@@ -114,9 +114,10 @@ def configreload_allservers():
                 app.logger.warning("Error sending reload url to %s", item)
             else:
                 app.logger.info("OK sending reload url to %s", item)
-            conn.close()
+            
         except:
             app.logger.warning("Error trying to connect to %s", item)
+        conn.close()
 
 
 def configreload_consultemplate_allservers():
