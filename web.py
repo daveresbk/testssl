@@ -108,15 +108,13 @@ def configreload_allservers():
         conn = http.client.HTTPConnection(item)
         try:
             conn.request("GET",RELOAD_ENPOINT)
-      
             respconn = conn.getresponse()
             if respconn.status != 200:
                 app.logger.warning("Error sending reload url to %s", item)
             else:
                 app.logger.info("OK sending reload url to %s", item)
-            
-        except Exception as e: 
-            app.logger.warning("Error trying to connect to %s - %s", item, e)
+        except Exception as ex:
+            app.logger.warning("Error trying to connect to %s - %s", item, ex)
         finally:
             conn.close()
 
