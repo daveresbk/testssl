@@ -211,8 +211,17 @@ def createdomain(domain, agencyId, application, forcessl):
     #logger.info("Creating new domain %s", domain)
 
     #First, remove domain if exits
-    deletedomain("change",domain)
-
+    siteFile = os.path.join(NGINX_SITES, domain + ".conf")
+    if os.path.exists(siteFile):
+        try:
+            os.remove(siteFile)
+            #logger.info("Deleted website for domain %s",domain)
+        except:
+            message="Unexpected error deleting website file. Error: " & sys.exc_info()[0]
+            abortbyerror(message)
+        configreload_allservers()
+    
+    #Check if request certificate is needed
     requestCertificate = True
 
     #If traveltool domain, skip certification request (use wildcard)
