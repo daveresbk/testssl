@@ -445,8 +445,9 @@ def config_reload():
     #resultCode, resultOutput = exec_command(NGINX_CHECK)
     resultCode = 0
     if not (resultCode == 0):
-        message="Error checking Nginx's configuration: " % resultOutput
-        abortbyerror(message)
+        print("test")
+        #message="Error checking Nginx's configuration: " % resultOutput
+        #abortbyerror(message)
     else:
         resultCode, resultOutput = exec_command(NGINX_RELOAD)
         if not (resultCode == 0):   
