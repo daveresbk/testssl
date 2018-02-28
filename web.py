@@ -442,7 +442,8 @@ def configuration():
 
 @app.route('/configreload', methods = ['GET'])
 def config_reload():
-    resultCode, resultOutput = exec_command(NGINX_CHECK)
+    #resultCode, resultOutput = exec_command(NGINX_CHECK)
+    resultCode = 0
     if not (resultCode == 0):
         message="Error checking Nginx's configuration: " % resultOutput
         abortbyerror(message)
