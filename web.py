@@ -221,7 +221,7 @@ def createdomain(domain, agencyId, application, forcessl):
         except:
             message="Unexpected error deleting website file. Error: " & sys.exc_info()[0]
             abortbyerror(message)
-        configreload_allservers()
+        #configreload_allservers()
     
     #Check if request certificate is needed
     requestCertificate = True
