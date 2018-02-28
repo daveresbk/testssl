@@ -209,6 +209,10 @@ def checkparameters(argumentos):
 
 def createdomain(domain, agencyId, application, forcessl):
     #logger.info("Creating new domain %s", domain)
+
+    #First, remove domain if exits
+    deletedomain("change",domain)
+
     requestCertificate = True
 
     #If traveltool domain, skip certification request (use wildcard)
