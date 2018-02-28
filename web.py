@@ -117,7 +117,8 @@ def configreload_allservers():
             
         except:
             app.logger.warning("Error trying to connect to %s", item)
-        conn.close()
+        finally:
+            conn.close()
 
 
 def configreload_consultemplate_allservers():
