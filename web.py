@@ -81,12 +81,9 @@ def abortbycertrequest(text):
     abort(501)
 
 def exec_command(cmd):
-    #logger.info("Executing: %s", cmd)
-    child = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
-    streamdata = (child.communicate()[0]).decode(sys.stdout.encoding)
-    #logger.info("Execution finished")
-    #logger.debug("Result: %s", str(streamdata))
-    return child.returncode, streamdata
+    process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+    output, err = process.communicate()
+    return process.returncode, output, err
 
 def template_website(template, tmpdomain, tmpagencyId, tmpapplication, tmpcertificate):
     #logger.info("Starting website template")
@@ -283,10 +280,9 @@ def createdomain(domain, agencyId, application, forcessl):
 
             #Execute certbot and check if certificate exists
             strCmd = CERTBOT_CREATECERT % domain
-            resultCode, resultOutput = exec_command(strCmd)
+            resultCode, resultOutput, resultError = exec_command(strCmd)
             if not (resultCode == 0):
-                app.logger.warning("Error executing certbot request for domain: %s", resultOutput)
-                message="Error executing certbot request for domain: " + resultOutput
+                message="Error executing certbot request for domain: " + resultError
                 abortbycertrequest(message)
         #logger.info (resultOutput)
         certificate = domain
@@ -333,10 +329,10 @@ def deletedomain(action,domain,removeSsl=False):
                 app.logger.warning("Couldn't find certificate for domain %s", certDomain)
             else:
                 strCmd = CERTBOT_DELETECERT % domain
-                resultCode, resultOutput = exec_command(strCmd)
+                resultCode, resultOutput, resultError = exec_command(strCmd)
                 if not (resultCode == 0):
                     #logger.warning("Error executing certbot delete for domain: %s", resultOutput)
-                    app.logger.warning("Error executing certbot delete for domain: %s", resultOutput)
+                    app.logger.warning("Error executing certbot delete for domain: %s", resultError)
                 try:
                     os.remove(certDomain)
                     #logger.info("Deleted certificate folder for domain %s",domain)
@@ -505,18 +501,18 @@ def configuration():
 
 @app.route('/configreload', methods = ['GET'])
 def config_reload():
-    resultCode, resultOutput = exec_command(NGINX_RELOAD)
+    resultCode, resultOutput, resultError = exec_command(NGINX_RELOAD)
     if not (resultCode == 0):   
-        message="Error reloading Nginx's configuration: " + resultOutput
+        message="Error reloading Nginx's configuration: " + resultError
         abortbyerror(message)
     else:
         return 'Reload: OK'
 
 @app.route('/configreloadconsultemplate', methods = ['GET'])
 def config_reload_consultemplate():
-    resultCode, resultOutput = exec_command(CONSULTEMPLATE_RELOAD)
+    resultCode, resultOutput, resultError = exec_command(CONSULTEMPLATE_RELOAD)
     if not (resultCode == 0):   
-        message="Error reloading Consul-template's configuration: " + resultOutput
+        message="Error reloading Consul-template's configuration: " + resultError
         abortbyerror(message)
     else:
         return 'Reload: OK'
