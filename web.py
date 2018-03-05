@@ -230,7 +230,7 @@ def checkSubdomainTraveltool (domain):
 			
 	return subdomainTraveltool
 
-def checkValidIp (domain):
+def checkValidIp(domain):
     ipValida = False
     try:
         resolvIp = socket.gethostbyname(domain)
