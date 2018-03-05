@@ -187,32 +187,32 @@ def checkparameters(argumentos):
     if action == "add":
         if not (action and domain and agencyId and application):
             message="Invalid parameters for action " + action + ". Required arguments: command, domain, idagencia, application" 
-            abortbyerror(message)
+            abortbybadrequest(message)
         if ".traveltool." not in application:
             message="Invalid parameter for application: " + action + ". This paramater must be in form *.traveltool.*"
-            abortbyerror(message)
+            abortbybadrequest(message)
     elif action == "delete":
         if not (action and domain):
             message="Invalid parameters for action " + action + ". Required arguments: command, domain"
-            abortbyerror(message)
+            abortbybadrequest(message)
     elif action == "change":
         if not (action and domain and agencyId and application and newdomain):
             message="Invalid parameters for action " + action + ". Required arguments: command, domain, idagencia, application, newdomain" 
-            abortbyerror(message)
+            abortbybadrequest(message)
         if ".traveltool." not in application:
             message="Invalid parameter for application: " + action + ". This paramater must be in form *.traveltool.*"
-            abortbyerror(message)
+            abortbybadrequest(message)
     elif action == "addagent":
         if not (action and domain and agentName and agentUrl):
             message="Invalid parameters for action " + action + ". Required arguments: command, domain, name, url"
-            abortbyerror(message)
+            abortbybadrequest(message)
     elif action == "delagent":
         if not (action and domain and agentName):
             message="Invalid parameters for action " + action + ". Required arguments: command, domain, name" 
-            abortbyerror(message)
+            abortbybadrequest(message)
     else:
         message="action " + action + " not allowed" 
-        abortbyerror(message)
+        abortbybadrequest(message)
 
     #app.logger.info("Checked input parameters")
 
@@ -281,7 +281,7 @@ def createdomain(domain, agencyId, application, forcessl):
             resultCode, resultOutput = exec_command(strCmd)
             if not (resultCode == 0):
                 message="Error executing certbot request for domain: " + resultOutput
-                abortbyerror(message)
+                abortbybadrequest(message)
         #logger.info (resultOutput)
         certificate = domain
     else:
@@ -427,7 +427,7 @@ def custom400(error):
                     request.scheme,
                     request.full_path,
                     str(error))
-    return render_template('400.html'),400
+    return render_template('404.html'),400
 
 @app.errorhandler(500)
 def custom500(error):
@@ -480,12 +480,12 @@ def configuration():
             #migracion#configreload_allservers()
         else:
             message="Action " + action + " not allowed"
-            abortbyerror(message)
+            abortbybadrequest(message)
 
         return render_template('response.html',showlogs=showlogs),200
     else:
         message="Domain not allowed: " + domain + ". Own domain is required."
-        abortbyerror(message)
+        abortbybadrequest(message)
 
 @app.route('/configreload', methods = ['GET'])
 def config_reload():
