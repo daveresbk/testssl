@@ -70,6 +70,11 @@ def abortbybadrequest(text):
     flash(text,'error')
     abort(400)
 
+def abortbycertrequest(text):
+    app.logger.critical(text)
+    flash(text,'error')
+    abort(495)
+
 def abortbyerror(text):
     app.logger.critical(text)
     flash(text,'error')
@@ -281,7 +286,7 @@ def createdomain(domain, agencyId, application, forcessl):
             resultCode, resultOutput = exec_command(strCmd)
             if not (resultCode == 0):
                 message="Error executing certbot request for domain: " + resultOutput
-                abortbybadrequest(message)
+                abortbycertrequest(message)
         #logger.info (resultOutput)
         certificate = domain
     else:
@@ -428,6 +433,18 @@ def custom400(error):
                     request.full_path,
                     str(error))
     return render_template('404.html'),400
+
+@app.errorhandler(495)
+def custom495(error):
+    ts = strftime('[%Y-%b-%d %H:%M]')
+    app.logger.info('%s %s %s %s %s %s',
+                    ts,
+                    request.remote_addr,
+                    request.method,
+                    request.scheme,
+                    request.full_path,
+                    str(error))
+    return render_template('495.html'),495
 
 @app.errorhandler(500)
 def custom500(error):
