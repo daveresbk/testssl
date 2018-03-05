@@ -434,18 +434,6 @@ def custom400(error):
                     str(error))
     return render_template('404.html'),400
 
-@app.errorhandler(400)
-def custom400(error):
-    ts = strftime('[%Y-%b-%d %H:%M]')
-    app.logger.info('%s %s %s %s %s %s',
-                    ts,
-                    request.remote_addr,
-                    request.method,
-                    request.scheme,
-                    request.full_path,
-                    str(error))
-    return render_template('404.html'),400
-
 @app.errorhandler(500)
 def custom500(error):
     ts = strftime('[%Y-%b-%d %H:%M]')
@@ -468,7 +456,7 @@ def custom501(error):
                     request.scheme,
                     request.full_path,
                     str(error))
-    return render_template('500.html'),501
+    return render_template('501.html'),501
 
 @app.route('/', methods = ['GET'])
 def web_root():
