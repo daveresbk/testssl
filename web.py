@@ -83,14 +83,14 @@ def template_website(template, tmpdomain, tmpagencyId, tmpapplication, tmpcertif
 
     templateWebsite = os.path.join(THIS_DIR, template)
     if not os.path.exists(templateWebsite):
-        message="Couldn't find template file %s" % templateWebsite
+        message="Couldn't find template file " + templateWebsite
         abortbyerror(message)
 
     renderSite=TEMPLATE_ENVIRONMENT.get_template(template).render(domain = tmpdomain, agency = tmpagencyId, application = tmpapplication, certificate = tmpcertificate)
     #logger.debug("Output template render: %s", renderSite)
 
     if not os.path.exists(NGINX_SITES):
-        message="Couldn't find Nginx sites folder %s" % NGINX_SITES
+        message="Couldn't find Nginx sites folder " + NGINX_SITES
         abortbyerror(message)
     
     domainSite = os.path.join(NGINX_SITES, tmpdomain + ".conf")
@@ -180,31 +180,31 @@ def checkparameters(argumentos):
         showlogs=argumentos['showlogs']
 
     if ".traveltool." not in application:
-        message="Invalid parameter for application: %s. This paramater must be in form *.traveltool.*" % action
+        message="Invalid parameter for application: " + action + ". This paramater must be in form *.traveltool.*"
         abortbyerror(message)
 
     if action == "add":
         if not (action and domain and agencyId and application):
-            message="Invalid parameters for action %s. Required arguments: command, domain, idagencia, application" % action
+            message="Invalid parameters for action " + action + ". Required arguments: command, domain, idagencia, application" 
             abortbyerror(message)
     elif action == "delete":
         if not (action and domain):
-            message="Invalid parameters for action %s. Required arguments: command, domain" % action
+            message="Invalid parameters for action " + action + ". Required arguments: command, domain"
             abortbyerror(message)
     elif action == "change":
         if not (action and domain and agencyId and application and newdomain):
-            message="Invalid parameters for action %s. Required arguments: command, domain, idagencia, application, newdomain" % action
+            message="Invalid parameters for action " + action + ". Required arguments: command, domain, idagencia, application, newdomain" 
             abortbyerror(message)
     elif action == "addagent":
         if not (action and domain and agentName and agentUrl):
-            message="Invalid parameters for action %s. Required arguments: command, domain, name, url" % action
+            message="Invalid parameters for action " + action + ". Required arguments: command, domain, name, url"
             abortbyerror(message)
     elif action == "delagent":
         if not (action and domain and agentName):
-            message="Invalid parameters for action %s. Required arguments: command, domain, name" % action
+            message="Invalid parameters for action " + action + ". Required arguments: command, domain, name" 
             abortbyerror(message)
     else:
-        message="action %s no allowed" % action
+        message="action " + action + " not allowed" 
         abortbyerror(message)
 
     #app.logger.info("Checked input parameters")
@@ -231,11 +231,11 @@ def checkSubdomainTraveltool (domain):
 def checkValidIp (domain):
     ipValida = False
     try:
-        ip = socket.gethostbyname(domain)
+        resolvIp = socket.gethostbyname(domain)
     except:
         app.logger.warning("Error verifying ip for domain: %s", domain)
 
-    if ip in VALIDIPS:
+    if resolvIp in VALIDIPS:
         ipValida = True
 
     return ipValida
@@ -245,19 +245,19 @@ def createdomain(domain, agencyId, application, forcessl):
 
     #Check if ipValid
     if not checkValidIp(domain):
-        message="Error verifying ip for domain: " % domain
+        message="Error verifying ip for domain: " + domain
         abortbyerror(message)   
 
     #Remove domain if exits
     siteFile = os.path.join(NGINX_SITES, domain + ".conf")
     if os.path.exists(siteFile):
-        message="Web for %s exists. Call to change method is needed" % domain
+        message="Web for " + domain + " exists. Call to change method is needed"
         abortbyerror(message)
     
     if not checkSubdomainTraveltool(domain):
         #Check if certificate folder exists
         if not os.path.exists(CERT_FOLDER):
-            message="Couldn't find certificate folder %s" % CERT_FOLDER
+            message="Couldn't find certificate folder " + CERT_FOLDER
             abortbyerror(message)
 
         #Check if certificate exists
@@ -269,7 +269,7 @@ def createdomain(domain, agencyId, application, forcessl):
             strCmd = CERTBOT_CREATECERT % domain
             resultCode, resultOutput = exec_command(strCmd)
             if not (resultCode == 0):
-                message="Error executing certbot request for domain: %s" % resultOutput
+                message="Error executing certbot request for domain: " + resultOutput
                 abortbyerror(message)
         #logger.info (resultOutput)
         certificate = domain
@@ -300,7 +300,7 @@ def deletedomain(action,domain,removeSsl=False):
             os.remove(siteFile)
             #logger.info("Deleted website for domain %s",domain)
         except:
-            message="Unexpected error deleting website file. Error: " & sys.exc_info()[0]
+            message="Unexpected error deleting website file. Error: " + sys.exc_info()[0]
             abortbyerror(message)
     else:
         #logger.warning("Site file doesn't exist: %s",siteFile)
@@ -324,7 +324,7 @@ def deletedomain(action,domain,removeSsl=False):
                     os.remove(certDomain)
                     #logger.info("Deleted certificate folder for domain %s",domain)
                 except:
-                    message="Unexpected error deleting certificate folder. Error: " % sys.exc_info()[0]
+                    message="Unexpected error deleting certificate folder. Error: " + sys.exc_info()[0]
                     abortbyerror(message)
     else:
         #in case change, we need to reload the config
@@ -353,13 +353,13 @@ def addagent(domain, agentName, agentUrl):
     #Check if domain file exist
     siteFile = os.path.join(NGINX_SITES, domain + ".conf")
     if not os.path.exists(siteFile):
-        message="Couldn't find site file for domain %s" % domain
+        message="Couldn't find site file for domain: " + domain
         abortbyerror(message)
 
     #Template agent file
     templateAgent = os.path.join(THIS_DIR, TEMPLATE_AGENT)
     if not os.path.exists(templateAgent):
-        message="Couldn't find template file %s" % templateAgent
+        message="Couldn't find template file " + templateAgent
         abortbyerror(message)
     renderAgent = TEMPLATE_ENVIRONMENT.get_template(TEMPLATE_AGENT).render(name = agentName, url = agentUrl)
 
@@ -370,7 +370,7 @@ def addagent(domain, agentName, agentUrl):
         try: 
             os.makedirs(agentDomainFolder)
         except: 
-            message="Unexpected error creating agent folder. Error: " % sys.exc_info()[0]
+            message="Unexpected error creating agent folder. Error: " + sys.exc_info()[0]
             abortbyerror(message)
     agentFile =  os.path.join(NGINX_AVAILSITES, domain + ".d/", agentName + ".conf")
     try:
@@ -378,7 +378,7 @@ def addagent(domain, agentName, agentUrl):
         with open(agentFile, 'w') as f:
             f.write(renderAgent)
     except:
-        message="Unexpected error creating agent file. Error: " % sys.exc_info()[0]
+        message="Unexpected error creating agent file. Error: " + sys.exc_info()[0]
         abortbyerror(message)
 
     #logger.info("Created new agent %s", agentName)
@@ -456,19 +456,19 @@ def configuration():
             delagent(domain, agentName)
             #migracion#configreload_allservers()
         else:
-            message="Action %s no allowed" % action
+            message="Action " + action + " not allowed"
             abortbyerror(message)
 
         return render_template('response.html',showlogs=showlogs),200
     else:
-        message="Domain not allowed: %s. Own domain is required." % domain
+        message="Domain not allowed: " + domain + ". Own domain is required."
         abortbyerror(message)
 
 @app.route('/configreload', methods = ['GET'])
 def config_reload():
     resultCode, resultOutput = exec_command(NGINX_RELOAD)
     if not (resultCode == 0):   
-        message="Error reloading Nginx's configuration: " % resultOutput
+        message="Error reloading Nginx's configuration: " + resultOutput
         abortbyerror(message)
     else:
         return 'Reload: OK'
@@ -477,7 +477,7 @@ def config_reload():
 def config_reload_consultemplate():
     resultCode, resultOutput = exec_command(CONSULTEMPLATE_RELOAD)
     if not (resultCode == 0):   
-        message="Error reloading Consul-template's configuration: " % resultOutput
+        message="Error reloading Consul-template's configuration: " + resultOutput
         abortbyerror(message)
     else:
         return 'Reload: OK'
