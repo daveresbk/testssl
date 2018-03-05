@@ -8,6 +8,7 @@ from time import strftime
 from logging.handlers import RotatingFileHandler
 from jinja2 import Environment, FileSystemLoader
 import http.client
+import socket
 
 app = Flask(__name__)
 logHandler = RotatingFileHandler('info.log', maxBytes=1000, backupCount=10)
@@ -58,6 +59,7 @@ TRAVELTOOL_WILDCARD = 'wildcard.traveltool.es'
 ARRAYSERVERS = ['ttmadtrvprvp00v', 'ttmadtrvprvp01v', 'ttmadtrvprvp02v']
 RELOAD_ENPOINT = '/configreload'
 RELOAD_ENPOINT_CONSULTEMPLATE = '/configreloadconsultemplate'
+VALIDIPS = ['213.130.43.55','213.130.43.119']
 
 #-----------------------------------------------------------------------------
 # Functions
@@ -226,10 +228,27 @@ def checkSubdomainTraveltool (domain):
 			
 	return subdomainTraveltool
 
+def checkValidIp (domain):
+    ipValida = False
+    try:
+        ip = socket.gethostbyname(domain)
+    except:
+        app.logger.warning("Error verifying ip for domain: %s", domain)
+
+    if ip in VALIDIPS:
+        ipValida = True
+
+    return ipValida
+
 def createdomain(domain, agencyId, application, forcessl):
     #logger.info("Creating new domain %s", domain)
 
-    #First, remove domain if exits
+    #Check if ipValid
+    if not checkValidIp(domain):
+        message="Error verifying ip for domain: " % domain
+        abortbyerror(message)   
+
+    #Remove domain if exits
     siteFile = os.path.join(NGINX_SITES, domain + ".conf")
     if os.path.exists(siteFile):
         message="Web for %s exists. Call to change method is needed" % domain
