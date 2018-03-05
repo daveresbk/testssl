@@ -434,18 +434,6 @@ def custom400(error):
                     str(error))
     return render_template('404.html'),400
 
-@app.errorhandler(495)
-def custom495(error):
-    ts = strftime('[%Y-%b-%d %H:%M]')
-    app.logger.info('%s %s %s %s %s %s',
-                    ts,
-                    request.remote_addr,
-                    request.method,
-                    request.scheme,
-                    request.full_path,
-                    str(error))
-    return render_template('495.html'),495
-
 @app.errorhandler(500)
 def custom500(error):
     ts = strftime('[%Y-%b-%d %H:%M]')
