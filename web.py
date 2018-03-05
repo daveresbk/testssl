@@ -70,15 +70,15 @@ def abortbybadrequest(text):
     flash(text,'error')
     abort(400)
 
-def abortbycertrequest(text):
-    app.logger.critical(text)
-    flash(text,'error')
-    abort(495)
-
 def abortbyerror(text):
     app.logger.critical(text)
     flash(text,'error')
     abort(500)
+
+def abortbycertrequest(text):
+    app.logger.critical(text)
+    flash(text,'error')
+    abort(501)
 
 def exec_command(cmd):
     #logger.info("Executing: %s", cmd)
@@ -434,6 +434,18 @@ def custom400(error):
                     str(error))
     return render_template('404.html'),400
 
+@app.errorhandler(400)
+def custom400(error):
+    ts = strftime('[%Y-%b-%d %H:%M]')
+    app.logger.info('%s %s %s %s %s %s',
+                    ts,
+                    request.remote_addr,
+                    request.method,
+                    request.scheme,
+                    request.full_path,
+                    str(error))
+    return render_template('404.html'),400
+
 @app.errorhandler(500)
 def custom500(error):
     ts = strftime('[%Y-%b-%d %H:%M]')
@@ -445,8 +457,18 @@ def custom500(error):
                     request.full_path,
                     str(error))
     return render_template('500.html'),500
-#    response = jsonify({'message': error.description})
-#    return response, 500
+
+@app.errorhandler(501)
+def custom501(error):
+    ts = strftime('[%Y-%b-%d %H:%M]')
+    app.logger.info('%s %s %s %s %s %s',
+                    ts,
+                    request.remote_addr,
+                    request.method,
+                    request.scheme,
+                    request.full_path,
+                    str(error))
+    return render_template('500.html'),501
 
 @app.route('/', methods = ['GET'])
 def web_root():
