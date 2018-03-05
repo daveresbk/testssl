@@ -234,9 +234,11 @@ def checkValidIp(domain):
     ipValida = False
     try:
         resolvIp = socket.gethostbyname(domain)
+    except socket.gaierror:
+        pass
     except:
-        print("cannot resolve hostname")
-        
+        app.logger.warning("Error obtaining the ip for domain %s", domain)
+
     if resolvIp in VALIDIPS:
         ipValida = True
 
