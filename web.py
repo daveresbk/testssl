@@ -285,6 +285,7 @@ def createdomain(domain, agencyId, application, forcessl):
             strCmd = CERTBOT_CREATECERT % domain
             resultCode, resultOutput = exec_command(strCmd)
             if not (resultCode == 0):
+                app.logger.warning("Error executing certbot request for domain: %s", resultOutput)
                 message="Error executing certbot request for domain: " + resultOutput
                 abortbycertrequest(message)
         #logger.info (resultOutput)
