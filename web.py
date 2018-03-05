@@ -282,7 +282,7 @@ def createdomain(domain, agencyId, application, forcessl):
             strCmd = CERTBOT_CREATECERT % domain
             resultCode, resultOutput, resultError = exec_command(strCmd)
             if not (resultCode == 0):
-                message="Error executing certbot request for domain: " + resultError.decode("utf-8")
+                message="Error executing certbot request for domain: " + domain + ". Output: " + resultError.decode("utf-8")
                 abortbycertrequest(message)
         #logger.info (resultOutput)
         certificate = domain
@@ -332,7 +332,7 @@ def deletedomain(action,domain,removeSsl=False):
                 resultCode, resultOutput, resultError = exec_command(strCmd)
                 if not (resultCode == 0):
                     #logger.warning("Error executing certbot delete for domain: %s", resultOutput)
-                    app.logger.warning("Error executing certbot delete for domain: %s", resultError.decode("utf-8"))
+                    app.logger.warning("Error executing certbot delete for domain: %s. Output: %s", domain, resultError.decode("utf-8"))
                 try:
                     os.remove(certDomain)
                     #logger.info("Deleted certificate folder for domain %s",domain)
