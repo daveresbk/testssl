@@ -417,6 +417,18 @@ def delagent(domain, agentName):
 def page_not_found(e):
     return render_template('400.html'), 404
 
+@app.errorhandler(400)
+def custom400(error):
+    ts = strftime('[%Y-%b-%d %H:%M]')
+    app.logger.info('%s %s %s %s %s %s',
+                    ts,
+                    request.remote_addr,
+                    request.method,
+                    request.scheme,
+                    request.full_path,
+                    str(error))
+    return render_template('400.html'),400
+
 @app.errorhandler(500)
 def custom500(error):
     ts = strftime('[%Y-%b-%d %H:%M]')
