@@ -179,13 +179,12 @@ def checkparameters(argumentos):
     if 'showlogs' in argumentos: 
         showlogs=argumentos['showlogs']
 
-    if ".traveltool." not in application:
-        message="Invalid parameter for application: " + action + ". This paramater must be in form *.traveltool.*"
-        abortbyerror(message)
-
     if action == "add":
         if not (action and domain and agencyId and application):
             message="Invalid parameters for action " + action + ". Required arguments: command, domain, idagencia, application" 
+            abortbyerror(message)
+        if ".traveltool." not in application:
+            message="Invalid parameter for application: " + action + ". This paramater must be in form *.traveltool.*"
             abortbyerror(message)
     elif action == "delete":
         if not (action and domain):
@@ -194,6 +193,9 @@ def checkparameters(argumentos):
     elif action == "change":
         if not (action and domain and agencyId and application and newdomain):
             message="Invalid parameters for action " + action + ". Required arguments: command, domain, idagencia, application, newdomain" 
+            abortbyerror(message)
+        if ".traveltool." not in application:
+            message="Invalid parameter for application: " + action + ". This paramater must be in form *.traveltool.*"
             abortbyerror(message)
     elif action == "addagent":
         if not (action and domain and agentName and agentUrl):
