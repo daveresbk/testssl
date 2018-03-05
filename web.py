@@ -282,7 +282,7 @@ def createdomain(domain, agencyId, application, forcessl):
             strCmd = CERTBOT_CREATECERT % domain
             resultCode, resultOutput, resultError = exec_command(strCmd)
             if not (resultCode == 0):
-                message="Error executing certbot request for domain: " + resultError
+                message="Error executing certbot request for domain: " + resultError.decode("utf-8")
                 abortbycertrequest(message)
         #logger.info (resultOutput)
         certificate = domain
@@ -332,7 +332,7 @@ def deletedomain(action,domain,removeSsl=False):
                 resultCode, resultOutput, resultError = exec_command(strCmd)
                 if not (resultCode == 0):
                     #logger.warning("Error executing certbot delete for domain: %s", resultOutput)
-                    app.logger.warning("Error executing certbot delete for domain: %s", resultError)
+                    app.logger.warning("Error executing certbot delete for domain: %s", resultError.decode("utf-8"))
                 try:
                     os.remove(certDomain)
                     #logger.info("Deleted certificate folder for domain %s",domain)
@@ -503,7 +503,7 @@ def configuration():
 def config_reload():
     resultCode, resultOutput, resultError = exec_command(NGINX_RELOAD)
     if not (resultCode == 0):   
-        message="Error reloading Nginx's configuration: " + resultError
+        message="Error reloading Nginx's configuration: " + resultError.decode("utf-8")
         abortbyerror(message)
     else:
         return 'Reload: OK'
@@ -512,7 +512,7 @@ def config_reload():
 def config_reload_consultemplate():
     resultCode, resultOutput, resultError = exec_command(CONSULTEMPLATE_RELOAD)
     if not (resultCode == 0):   
-        message="Error reloading Consul-template's configuration: " + resultError
+        message="Error reloading Consul-template's configuration: " + resultError.decode("utf-8")
         abortbyerror(message)
     else:
         return 'Reload: OK'
