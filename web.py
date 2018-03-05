@@ -209,34 +209,33 @@ def checkparameters(argumentos):
 
     return action, domain, agencyId, application, newdomain, agentName, agentUrl, forcessl, showlogs
 
+def checkSubdomainTraveltool (domain):
+
+	#Check if subdomain Traveltool
+	subdomainTraveltool = False
+
+	#If traveltool domain, skip certification request (use wildcard)
+	if ".traveltool." in domain:
+		strRegex = re.compile('(.*).traveltool.', re.IGNORECASE)
+		strFound = strRegex.match(domain)
+		domainPreffix = strFound.group(1)
+		if "." in domainPreffix:
+			subdomainTraveltool = False
+		else:
+			subdomainTraveltool = True
+			
+	return subdomainTraveltool
+
 def createdomain(domain, agencyId, application, forcessl):
     #logger.info("Creating new domain %s", domain)
 
     #First, remove domain if exits
     siteFile = os.path.join(NGINX_SITES, domain + ".conf")
     if os.path.exists(siteFile):
-        try:
-            os.remove(siteFile)
-            #logger.info("Deleted website for domain %s",domain)
-        except:
-            message="Unexpected error deleting website file. Error: " & sys.exc_info()[0]
-            abortbyerror(message)
-        configreload_allservers()
+        message="Web for %s exist. Call to change method is needed" & domain
+        abortbyerror(message)
     
-    #Check if request certificate is needed
-    requestCertificate = True
-
-    #If traveltool domain, skip certification request (use wildcard)
-    if ".traveltool." in domain:
-        strRegex = re.compile('(.*).traveltool.', re.IGNORECASE)
-        strFound = strRegex.match(domain)
-        domainPreffix = strFound.group(1)
-        if "." in domainPreffix:
-            requestCertificate = True
-        else:
-            requestCertificate = False
-
-    if requestCertificate:
+    if not checkSubdomainTraveltool(domain):
         #Check if certificate folder exists
         if not os.path.exists(CERT_FOLDER):
             message="Couldn't find certificate folder %s" % CERT_FOLDER
@@ -272,7 +271,7 @@ def createdomain(domain, agencyId, application, forcessl):
 
     return
 
-def deletedomain(action,domain):
+def deletedomain(action,domain,removeSsl=False):
     #logger.info("Deleting domain %s ...", domain)
 
     #delete website config
@@ -290,7 +289,7 @@ def deletedomain(action,domain):
 
     #only if action delete, if action change not delete certificate
     if action == "delete":   
-        if ".traveltool." not in domain:
+        if not checkSubdomainTraveltool(domain):
             #Check if certificate exists
             certDomain = os.path.join(CERT_FOLDER, domain)
             if not os.path.exists(certDomain):
@@ -308,6 +307,9 @@ def deletedomain(action,domain):
                 except:
                     message="Unexpected error deleting certificate folder. Error: " % sys.exc_info()[0]
                     abortbyerror(message)
+    else:
+        #in case change, we need to reload the config
+        configreload_allservers()
 
     #logger.info("Deleted domain %s",domain)
 
@@ -316,7 +318,10 @@ def deletedomain(action,domain):
 def changedomain(domain, agencyId, application, newdomain, forcessl):
     #logger.info("Changing website configuration for domain %s ...", domain)
 
-    deletedomain("change",domain)
+    if domain == newdomain:
+        deletedomain("change",domain)
+    else:
+        deletedomain("change",domain,True)
     createdomain(newdomain,agencyId,application,forcessl)
 
     #logger.info("Changed website configuration for domain %s", domain)
