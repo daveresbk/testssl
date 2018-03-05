@@ -234,8 +234,8 @@ def checkValidIp(domain):
     ipValida = False
     try:
         resolvIp = socket.gethostbyname(domain)
-    except socket.gaierror:
-        print("Ooops")
+    except:
+        print("cannot resolve hostname")
         
     if resolvIp in VALIDIPS:
         ipValida = True
