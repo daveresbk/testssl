@@ -65,6 +65,11 @@ VALIDIPS = ['213.130.43.55','213.130.43.119']
 # Functions
 #-----------------------------------------------------------------------------
 
+def abortbybadrequest(text):
+    app.logger.critical(text)
+    flash(text,'error')
+    abort(400)
+
 def abortbyerror(text):
     app.logger.critical(text)
     flash(text,'error')
@@ -236,10 +241,10 @@ def checkValidIp(domain):
         resolvIp = socket.gethostbyname(domain)
     except socket.gaierror:
         message="Error verifying ip for domain: " + domain
-        abortbyerror(message)  
+        abortbybadrequest(message)  
     except:
         message="Error verifying ip for domain: " + domain
-        abortbyerror(message)  
+        abortbybadrequest(message)  
 
     if resolvIp in VALIDIPS:
         ipValida = True
@@ -252,7 +257,7 @@ def createdomain(domain, agencyId, application, forcessl):
     #Check if ipValid
     if not checkValidIp(domain):
         message="Error verifying ip for domain: " + domain
-        abortbyerror(message)   
+        abortbybadrequest(message)   
 
     #Remove domain if exits
     siteFile = os.path.join(NGINX_SITES, domain + ".conf")
