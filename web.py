@@ -447,19 +447,12 @@ def configuration():
 
 @app.route('/configreload', methods = ['GET'])
 def config_reload():
-    #resultCode, resultOutput = exec_command(NGINX_CHECK)
-    resultCode = 0
-    if not (resultCode == 0):
-        print("test")
-        #message="Error checking Nginx's configuration: " % resultOutput
-        #abortbyerror(message)
+    resultCode, resultOutput = exec_command(NGINX_RELOAD)
+    if not (resultCode == 0):   
+        message="Error reloading Nginx's configuration: " % resultOutput
+        abortbyerror(message)
     else:
-        resultCode, resultOutput = exec_command(NGINX_RELOAD)
-        if not (resultCode == 0):   
-            message="Error reloading Nginx's configuration: " % resultOutput
-            abortbyerror(message)
-        else:
-            return 'Reload: OK'
+        return 'Reload: OK'
 
 @app.route('/configreloadconsultemplate', methods = ['GET'])
 def config_reload_consultemplate():
