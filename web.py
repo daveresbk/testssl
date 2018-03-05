@@ -420,7 +420,7 @@ def delagent(domain, agentName):
  ### ROUTES ###
 @app.errorhandler(404)
 def page_not_found(e):
-    return render_template('400.html'), 404
+    return render_template('404.html'), 404
 
 @app.errorhandler(400)
 def custom400(error):
@@ -432,7 +432,7 @@ def custom400(error):
                     request.scheme,
                     request.full_path,
                     str(error))
-    return render_template('404.html'),400
+    return render_template('400.html'),400
 
 @app.errorhandler(500)
 def custom500(error):
