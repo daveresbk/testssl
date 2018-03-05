@@ -232,7 +232,7 @@ def createdomain(domain, agencyId, application, forcessl):
     #First, remove domain if exits
     siteFile = os.path.join(NGINX_SITES, domain + ".conf")
     if os.path.exists(siteFile):
-        message="Web for %s exist. Call to change method is needed" & domain
+        message="Web for %s exists. Call to change method is needed" % domain
         abortbyerror(message)
     
     if not checkSubdomainTraveltool(domain):
