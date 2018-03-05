@@ -234,7 +234,7 @@ def checkValidIp(domain):
     ipValida = False
     try:
         resolvIp = socket.gethostbyname(domain)
-    except:
+    except socket.gaierror:
         app.logger.warning("Error verifying ip for domain: %s", domain)
 
     if resolvIp in VALIDIPS:
@@ -306,7 +306,7 @@ def deletedomain(action,domain,removeSsl=False):
             abortbyerror(message)
     else:
         #logger.warning("Site file doesn't exist: %s",siteFile)
-        app.logger.warning("Site file doesn't exist: %s",siteFile)
+        app.logger.warning("Site file doesn't exist: %s", siteFile)
 
     #only if action delete, if action change not delete certificate
     if action == "delete":   
