@@ -332,7 +332,7 @@ def deletedomain(action,domain,removeSsl=False):
                 resultCode, resultOutput, resultError = exec_command(strCmd)
                 if not (resultCode == 0):
                     #logger.warning("Error executing certbot delete for domain: %s", resultOutput)
-                    app.logger.warning("Error executing certbot delete for domain: %s. Output: %s", domain, resultError
+                    app.logger.warning("Error executing certbot delete for domain: %s. Output: %s", domain, resultError)
                 try:
                     os.remove(certDomain)
                     #logger.info("Deleted certificate folder for domain %s",domain)
