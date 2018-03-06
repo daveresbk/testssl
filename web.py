@@ -83,7 +83,7 @@ def abortbycertrequest(text):
 def exec_command(cmd):
     process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     output, err = process.communicate()
-    return process.returncode, output, err
+    return process.returncode, output.decode("utf-8"), err.decode("utf-8")
 
 def template_website(template, tmpdomain, tmpagencyId, tmpapplication, tmpcertificate):
     #logger.info("Starting website template")
@@ -282,7 +282,7 @@ def createdomain(domain, agencyId, application, forcessl):
             strCmd = CERTBOT_CREATECERT % domain
             resultCode, resultOutput, resultError = exec_command(strCmd)
             if not (resultCode == 0):
-                message="Error executing certbot request for domain: " + domain + ". Output: " + resultError.decode("utf-8")
+                message="Error executing certbot request for domain: " + domain + ". Output: " + resultError
                 abortbycertrequest(message)
         #logger.info (resultOutput)
         certificate = domain
@@ -332,7 +332,7 @@ def deletedomain(action,domain,removeSsl=False):
                 resultCode, resultOutput, resultError = exec_command(strCmd)
                 if not (resultCode == 0):
                     #logger.warning("Error executing certbot delete for domain: %s", resultOutput)
-                    app.logger.warning("Error executing certbot delete for domain: %s. Output: %s", domain, resultError.decode("utf-8"))
+                    app.logger.warning("Error executing certbot delete for domain: %s. Output: %s", domain, resultError
                 try:
                     os.remove(certDomain)
                     #logger.info("Deleted certificate folder for domain %s",domain)
@@ -503,7 +503,7 @@ def configuration():
 def config_reload():
     resultCode, resultOutput, resultError = exec_command(NGINX_RELOAD)
     if not (resultCode == 0):   
-        message="Error reloading Nginx's configuration: " + resultError.decode("utf-8")
+        message="Error reloading Nginx's configuration: " + resultError
         abortbyerror(message)
     else:
         return 'Reload: OK'
@@ -512,7 +512,7 @@ def config_reload():
 def config_reload_consultemplate():
     resultCode, resultOutput, resultError = exec_command(CONSULTEMPLATE_RELOAD)
     if not (resultCode == 0):   
-        message="Error reloading Consul-template's configuration: " + resultError.decode("utf-8")
+        message="Error reloading Consul-template's configuration: " + resultError
         abortbyerror(message)
     else:
         return 'Reload: OK'
