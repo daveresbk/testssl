@@ -386,6 +386,12 @@ def addagent(domain, agentName, agentUrl):
             message="Unexpected error creating agent folder. Error: " + sys.exc_info()[0]
             abortbyerror(message)
     agentFile =  os.path.join(NGINX_AVAILSITES, domain + ".d/", agentName + ".conf")
+    if os.path.exists(agentFile):
+        try:
+            os.remove(siteFile)
+        except:
+            message="Unexpected error deleting agent file. Error: " + sys.exc_info()[0]
+            abortbyerror(message)
     try:
         #logger.info("Creating file for agent: %s", agentFile)
         with open(agentFile, 'w') as f:
@@ -393,8 +399,6 @@ def addagent(domain, agentName, agentUrl):
     except:
         message="Unexpected error creating agent file. Error: " + sys.exc_info()[0]
         abortbyerror(message)
-
-    #logger.info("Created new agent %s", agentName)
 
     return
 
@@ -407,8 +411,6 @@ def delagent(domain, agentName):
     except:
         message="Unexpected error deleting agent file. Error: " + sys.exc_info()[0]
         abortbyerror(message)
-
-    #logger.info("Finished to delete agent: %s", agentName)
 
     return
 
