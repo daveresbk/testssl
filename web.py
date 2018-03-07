@@ -367,7 +367,7 @@ def addagent(domain, agentName, agentUrl):
     siteFile = os.path.join(NGINX_SITES, domain + ".conf")
     if not os.path.exists(siteFile):
         message="Couldn't find site file for domain: " + domain
-        abortbyerror(message)
+        abortbybadrequest(message)
 
     #Template agent file
     templateAgent = os.path.join(THIS_DIR, TEMPLATE_AGENT)
