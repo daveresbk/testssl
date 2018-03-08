@@ -388,7 +388,7 @@ def addagent(domain, agentName, agentUrl):
     agentFile =  os.path.join(NGINX_AVAILSITES, domain + ".d/", agentName + ".conf")
     if os.path.exists(agentFile):
         try:
-            os.remove(siteFile)
+            os.remove(agentFile)
         except:
             message="Unexpected error deleting agent file. Error: " + sys.exc_info()[0]
             abortbyerror(message)
