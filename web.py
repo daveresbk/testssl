@@ -50,6 +50,7 @@ CERTBOT_CREATECERT = "certbot certonly --webroot -w /usr/share/nginx/html/ -d %s
 CERTBOT_DELETECERT = "certbot delete --cert-name %s"
 TEMPLATE_WEBSITE = 'traveltool_website.j2'
 TEMPLATE_SSL_WEBSITE = 'traveltool_ssl_website.j2'
+TEMPLATE_REDIRECT = 'traveltool_redirect.j2'
 TEMPLATE_AGENT = 'agent.j2'
 TEMPLATE_ENVIRONMENT = Environment(
     autoescape=False,
@@ -94,6 +95,33 @@ def template_website(template, tmpdomain, tmpagencyId, tmpapplication, tmpcertif
         abortbyerror(message)
 
     renderSite=TEMPLATE_ENVIRONMENT.get_template(template).render(domain = tmpdomain, agency = tmpagencyId, application = tmpapplication, certificate = tmpcertificate)
+    #logger.debug("Output template render: %s", renderSite)
+
+    if not os.path.exists(NGINX_SITES):
+        message="Couldn't find Nginx sites folder " + NGINX_SITES
+        abortbyerror(message)
+    
+    domainSite = os.path.join(NGINX_SITES, tmpdomain + ".conf")
+    try:
+        with open(domainSite, 'w') as f:
+            f.write(renderSite)
+    except:
+        message="Unexpected error creating website file. Error: " + sys.exc_info()[0]
+        abortbyerror(message)
+    #logger.debug("Site templated in %s", tmpdomain)
+    
+    #logger.info("Finished website template")
+    return
+
+def template_website_redirect(template, tmpdomain, tmpredirectdomain, tmpcertificate):
+    #logger.info("Starting website template")
+
+    templateWebsite = os.path.join(THIS_DIR, template)
+    if not os.path.exists(templateWebsite):
+        message="Couldn't find template file " + templateWebsite
+        abortbyerror(message)
+
+    renderSite=TEMPLATE_ENVIRONMENT.get_template(template).render(domain = tmpdomain, redirectdomain = tmpredirectdomain, certificate = tmpcertificate)
     #logger.debug("Output template render: %s", renderSite)
 
     if not os.path.exists(NGINX_SITES):
@@ -203,6 +231,10 @@ def checkparameters(argumentos):
             abortbybadrequest(message)
         if ".traveltool." not in application:
             message="Invalid parameter for application: " + action + ". This paramater must be in form *.traveltool.*"
+            abortbybadrequest(message)
+    elif action == "redirectdomain":
+        if not (action and domain and newdomain):
+            message="Invalid parameters for action " + action + ". Required arguments: command, domain, newdomain"
             abortbybadrequest(message)
     elif action == "addagent":
         if not (action and domain and agentName and agentUrl):
@@ -360,6 +392,46 @@ def changedomain(domain, agencyId, application, newdomain, forcessl):
 
     return
 
+def redirectdomain(domain, newdomain):
+    #logger.info("Creating new domain %s", domain)
+
+    #Check if ipValid
+    if not checkValidIp(domain):
+        message="Error verifying ip for domain: " + domain
+        abortbybadrequest(message)   
+
+    if not checkSubdomainTraveltool(domain):
+        #Check if certificate folder exists
+        if not os.path.exists(CERT_FOLDER):
+            message="Couldn't find certificate folder " + CERT_FOLDER
+            abortbyerror(message)
+
+        #Check if certificate exists
+        certDomain = os.path.join(CERT_FOLDER, domain + "/cert.pem")
+        if not os.path.exists(certDomain):
+            #logger.info("Couldn't find certificate for domain %s", certDomain)
+
+            #Execute certbot and check if certificate exists
+            strCmd = CERTBOT_CREATECERT % domain
+            resultCode, resultOutput, resultError = exec_command(strCmd)
+            if not (resultCode == 0):
+                message="Error executing certbot request for domain: " + domain + ". Output: " + resultError
+                abortbycertrequest(message)
+        #logger.info (resultOutput)
+        certificate = domain
+    else:
+        certificate = TRAVELTOOL_WILDCARD
+
+    #Template nginx site
+    template = TEMPLATE_REDIRECT
+    template_website_redirect(template, domain, newdomain, certificate)
+
+    #Check nginx config and reload
+
+    #logger.info("Created new domain %s", domain)
+
+    return
+
 def addagent(domain, agentName, agentUrl):
     #logger.info("Creating new agent %s ...", agentName)
 
@@ -484,6 +556,9 @@ def configuration():
             #logger.debug("change domain")
             changedomain(domain,agencyId,application,newdomain,forcessl)
             #migracion#configreload_allservers()
+        elif action == "redirectdomain":
+            #logger.debug("change domain")
+            redirectdomain(domain,newdomain)
         elif action == "addagent":
             #logger.debug("add agent")
             addagent(domain, agentName, agentUrl)

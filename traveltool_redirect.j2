@@ -1,0 +1,23 @@
+server {
+        listen       80;
+        server_name  {{ domain }};
+
+        return       301 https://$redirectdomain$request_uri;
+}
+
+server {
+        listen      443 ssl http2;
+        server_name  {{ domain }};
+
+        {% if certificate == 'wildcard.traveltool.es' %}
+        ssl_certificate /etc/nginx/ssl/wildcard.traveltool.crt; 
+        ssl_certificate_key /etc/nginx/ssl/wildcard.traveltool.key; 
+        {% else %}
+        ssl_certificate /etc/letsencrypt/live/{{ certificate }}/fullchain.pem; # managed by Certbot 
+        ssl_certificate_key /etc/letsencrypt/live/{{ certificate }}/privkey.pem; # managed by Certbot 
+        include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot 
+        ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot 
+        {% endif %}
+
+        return       301 https://redirectdomain$request_uri;
+}
