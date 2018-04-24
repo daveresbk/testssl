@@ -2,7 +2,7 @@ server {
         listen       80;
         server_name  {{ domain }};
 
-        return       301 https://$redirectdomain$request_uri;
+        return       301 https://{{ redirectdomain }}$request_uri;
 }
 
 server {
@@ -19,5 +19,5 @@ server {
         ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot 
         {% endif %}
 
-        return       301 https://redirectdomain$request_uri;
+        return       301 https://{{ redirectdomain }}$request_uri;
 }

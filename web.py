@@ -221,7 +221,7 @@ def checkparameters(argumentos):
         if ".traveltool." not in application:
             message="Invalid parameter for application: " + action + ". This paramater must be in form *.traveltool.*"
             abortbybadrequest(message)
-    elif action == "delete":
+    elif action == "del":
         if not (action and domain):
             message="Invalid parameters for action " + action + ". Required arguments: command, domain"
             abortbybadrequest(message)
@@ -548,7 +548,7 @@ def configuration():
             #logger.debug("create domain")
             createdomain(domain,agencyId,application,forcessl)
             #migracion#configreload_allservers()
-        elif action == "delete":
+        elif action == "del":
             #logger.debug("delete domain")
             deletedomain(action,domain)
             #migracion#configreload_allservers()
