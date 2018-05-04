@@ -365,12 +365,6 @@ def deletedomain(action,domain,removeSsl=False):
                 if not (resultCode == 0):
                     #logger.warning("Error executing certbot delete for domain: %s", resultOutput)
                     app.logger.warning("Error executing certbot delete for domain: %s. Output: %s", domain, resultError)
-                try:
-                    os.remove(certDomain)
-                    #logger.info("Deleted certificate folder for domain %s",domain)
-                except:
-                    message="Unexpected error deleting certificate folder. Error: " + sys.exc_info()[0]
-                    abortbyerror(message)
     else:
         #in case change, we need to reload the config
         configreload_allservers()
