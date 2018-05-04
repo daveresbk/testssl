@@ -352,7 +352,7 @@ def deletedomain(action,domain,removeSsl=False):
         app.logger.warning("Site file doesn't exist: %s", siteFile)
 
     #only if action delete, if action change not delete certificate
-    if action == "delete":   
+    if action == "del":   
         if not checkSubdomainTraveltool(domain):
             #Check if certificate exists
             certDomain = os.path.join(CERT_FOLDER, domain)
